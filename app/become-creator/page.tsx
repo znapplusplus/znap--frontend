@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui";
 
 type StoredUser = {
   id?: string;
@@ -129,12 +129,13 @@ export default function BecomeCreatorPage() {
       <div className="mx-auto max-w-2xl">
         {/* Back link */}
         <div className="mb-4">
-          <Link
+          <Button
             href="/"
+            variant="unstyled"
             className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[color:var(--brand-600)]"
           >
             ← กลับหน้าหลัก
-          </Link>
+          </Button>
         </div>
 
         {/* Header */}
@@ -267,8 +268,9 @@ export default function BecomeCreatorPage() {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 sm:flex-row">
-            <button
+            <Button
               type="submit"
+              variant="unstyled"
               disabled={isLoading}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[color:var(--brand-500)] px-4 py-2.5 font-semibold text-white shadow-sm transition hover:bg-[color:var(--brand-600)] focus-ring disabled:cursor-not-allowed disabled:opacity-60"
             >
@@ -279,13 +281,14 @@ export default function BecomeCreatorPage() {
                 </svg>
               )}
               {isLoading ? "กำลังสมัคร…" : "สมัครเป็นช่างภาพ"}
-            </button>
-            <Link
+            </Button>
+            <Button
               href="/"
+              variant="unstyled"
               className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:border-slate-400"
             >
               ยังไม่ตอนนี้
-            </Link>
+            </Button>
           </div>
         </form>
 

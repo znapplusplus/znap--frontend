@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui";
 
 type Role = "traveler" | "photographer";
 type ZnapUser = {
@@ -345,12 +346,14 @@ function Topbar({
               {role}
             </span>
           </span>
-          <button
+          <Button
+            type="button"
+            variant="unstyled"
             onClick={onLogout}
             className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:border-red-300 hover:bg-red-50 hover:text-red-700"
           >
             ออกจากระบบ
-          </button>
+          </Button>
         </div>
       </div>
     </header>
@@ -441,20 +444,22 @@ function ActionCard({
       <p className="mt-1 flex-1 text-xs text-slate-600">{desc}</p>
       <div className="mt-4">
         {cta.href ? (
-          <Link
+          <Button
             href={cta.href}
+            variant="unstyled"
             className={`inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold transition focus-ring ${btnCls}`}
           >
             {cta.label}
-          </Link>
+          </Button>
         ) : (
-          <button
+          <Button
             type="button"
+            variant="unstyled"
             onClick={onClick}
             className={`inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold transition focus-ring ${btnCls}`}
           >
             {cta.label}
-          </button>
+          </Button>
         )}
       </div>
     </div>
@@ -473,13 +478,14 @@ function ComingSoonCard({ icon, title, desc }: ComingSoonProps) {
       <h3 className="mt-2 text-sm font-bold text-slate-700">{title}</h3>
       <p className="mt-1 text-xs text-slate-500">{desc}</p>
       <div className="mt-4">
-        <button
+        <Button
           type="button"
+          variant="unstyled"
           disabled
           className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-lg border border-slate-200 bg-white/50 px-3 py-2 text-xs font-medium text-slate-400"
         >
           ยังใช้งานไม่ได้
-        </button>
+        </Button>
       </div>
     </div>
   );

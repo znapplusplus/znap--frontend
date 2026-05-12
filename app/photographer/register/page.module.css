@@ -1,0 +1,122 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-width: 590px;
+  margin: 0 auto;
+}
+
+.progressRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title {
+  margin: 0;
+  color: var(--color-secondary);
+  font-family: var(--font-heading);
+  font-size: clamp(1.55rem, 3vw, 2.05rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.countryPrefix {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 5.6rem;
+}
+
+.flag {
+  display: inline-grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 3px;
+  background: var(--color-background);
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.countryPrefix select {
+  max-width: 3.4rem;
+  cursor: pointer;
+  appearance: none;
+  font-size: var(--font-size-sm);
+}
+
+.termsRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: 0.45rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.45;
+}
+
+.termsRow input {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  accent-color: var(--color-secondary);
+}
+
+.termsRow a,
+.switchText a {
+  color: var(--color-secondary);
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 0.25rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-secondary);
+  color: var(--color-surface);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: background var(--transition-normal), opacity var(--transition-normal);
+}
+
+.primaryButton:hover {
+  background: var(--color-secondary-hover);
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.switchText {
+  margin: 0.2rem 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.errorText {
+  border-radius: var(--radius-md);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  padding: 0.45rem 0.65rem;
+}
+
+@media (max-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}

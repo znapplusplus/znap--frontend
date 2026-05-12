@@ -1,0 +1,87 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.card {
+  position: relative;
+  min-height: 86px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-text) 22%, transparent);
+  border-radius: 8px;
+  background: var(--color-border);
+  color: var(--color-surface);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.image,
+.overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.image {
+  background-position: center;
+  background-size: cover;
+  transition: transform var(--transition-normal);
+}
+
+.overlay {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-text) 0%, transparent) 20%,
+    color-mix(in srgb, var(--color-text) 62%, transparent) 100%
+  );
+}
+
+.label {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.55rem;
+  z-index: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-surface);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.active {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-secondary) 28%, transparent);
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 80px;
+  }
+}

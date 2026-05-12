@@ -1,58 +1,77 @@
-@import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  /* Brand */
-  --brand-50:  #EEF3FB;
-  --brand-100: #D8E3F4;
-  --brand-200: #B1C7E9;
-  --brand-300: #8AABDE;
-  --brand-400: #5C87CC;
-  --brand-500: #255AB1; /* primary */
-  --brand-600: #214F9D;
-  --brand-700: #1B4080;
-  --brand-800: #163366;
-  --brand-900: #102649;
-
-  /* Surfaces */
-  --background: #FFFFFF;
-  --foreground: #0F172A;     /* slate-900 */
-  --muted:      #64748B;     /* slate-500 */
-  --muted-2:    #F1F5F9;     /* slate-100 */
-  --border:     #E2E8F0;     /* slate-200 */
-
-  /* States */
-  --success: #16A34A;
-  --danger:  #DC2626;
-  --warning: #D97706;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-brand:     var(--brand-500);
-  --color-brand-50:  var(--brand-50);
-  --color-brand-100: var(--brand-100);
-  --color-brand-200: var(--brand-200);
-  --color-brand-300: var(--brand-300);
-  --color-brand-400: var(--brand-400);
-  --color-brand-500: var(--brand-500);
-  --color-brand-600: var(--brand-600);
-  --color-brand-700: var(--brand-700);
-  --color-brand-800: var(--brand-800);
-  --color-brand-900: var(--brand-900);
-  --font-sans: var(--font-noto-thai), var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-noto-thai), var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Reusable utility — focus ring แบรนด์ */
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-body);
+}
+
+button,
+input,
+textarea,
+select {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: inherit;
+}
+
+img,
+picture,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Focus ring utility */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-500)]/40 focus:border-[color:var(--brand-500)];
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-color: var(--color-primary);
 }

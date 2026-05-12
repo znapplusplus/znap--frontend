@@ -1,0 +1,334 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  font-family: var(--font-body);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.labelRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+}
+
+.labelHint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+}
+
+.requiredMark {
+  color: var(--color-error);
+}
+
+.controlWrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.control {
+  width: 100%;
+  min-height: var(--input-height);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.45rem 0.8rem;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  line-height: var(--line-height-base);
+  transition: border-color var(--transition-normal), background var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.control::placeholder {
+  color: var(--color-text-muted);
+}
+
+.control::-ms-reveal,
+.control::-ms-clear {
+  display: none;
+}
+
+.control::-webkit-credentials-auto-fill-button,
+.control::-webkit-contacts-auto-fill-button {
+  display: none;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+.control:hover:not(:disabled):not(:read-only) {
+  background: var(--input-hover-bg);
+  border-color: var(--input-active-border);
+}
+
+.control:focus-visible {
+  outline: none;
+  background: var(--color-surface);
+  border-color: var(--input-active-border);
+  box-shadow: none;
+}
+
+.textarea {
+  min-height: calc(var(--input-height) * 1.8);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  resize: vertical;
+}
+
+.hasLeftIcon {
+  padding-left: 3rem;
+}
+
+.hasLeftAddon {
+  padding-left: 6.6rem;
+}
+
+.hasRightIcon {
+  padding-right: 3rem;
+}
+
+.control[type="password"] {
+  padding-right: 4.5rem;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.icon svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.iconLeft {
+  left: 0.85rem;
+}
+
+.iconRight {
+  right: 0.85rem;
+}
+
+.addon {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+}
+
+.addonLeft {
+  left: 0.75rem;
+}
+
+.addonLeft::after {
+  content: "";
+  width: 1px;
+  height: 1.25rem;
+  margin-left: 0.65rem;
+  background: var(--color-border);
+}
+
+.addon button,
+.addon select {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.control.error ~ .icon {
+  color: var(--color-error);
+}
+
+.control.warning ~ .icon {
+  color: var(--color-warning);
+}
+
+.control.success ~ .icon {
+  color: var(--color-success);
+}
+
+.toggleButton {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  padding: 0.25rem 0.35rem;
+}
+
+.toggleIcon,
+.toggleIcon svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.toggleButton:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+.variantDefault {
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+}
+
+.variantFilled {
+  background: var(--color-background);
+  border-color: transparent;
+}
+
+.variantOutline {
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+}
+
+.variantSoft {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border-color: transparent;
+}
+
+.sizeSm {
+  min-height: 32px;
+  font-size: var(--font-size-sm);
+  padding: 0.45rem 0.75rem;
+}
+
+.sizeMd {
+  min-height: 34px;
+}
+
+.sizeLg {
+  min-height: 40px;
+  font-size: var(--font-size-lg);
+  padding: 0.65rem 1rem;
+}
+
+.disabled {
+  background: var(--color-disabled);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.readOnly {
+  background: var(--color-background);
+  color: var(--color-text-muted);
+}
+
+.filled {
+  background: var(--color-background);
+}
+
+.control.error {
+  background: var(--color-error-bg);
+  border-color: var(--color-error);
+}
+
+.control.error:hover:not(:disabled):not(:read-only),
+.control.error:focus-visible {
+  background: var(--color-error-bg);
+  border-color: var(--color-error);
+}
+
+.control.warning {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning);
+}
+
+.control.warning:hover:not(:disabled):not(:read-only),
+.control.warning:focus-visible {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning);
+}
+
+.control.success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+}
+
+.control.success:hover:not(:disabled):not(:read-only),
+.control.success:focus-visible {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+}
+
+.statusText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.statusText.error::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: var(--color-error);
+  color: var(--color-surface);
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.warning {
+  color: var(--color-warning);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.helper {
+  color: var(--color-text-muted);
+}

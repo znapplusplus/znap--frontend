@@ -1,119 +1,149 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { StepProgress, StylePreferencePicker, TravelerAuthShell, type StyleOption } from "@/components/auth";
+import { Button, Input } from "@/components/ui";
+import styles from "./page.module.css";
 
-type Role = "traveler" | "photographer";
 type FieldErrors = {
   firstName?: string;
   lastName?: string;
   email?: string;
+  phone?: string;
   password?: string;
   confirmPassword?: string;
+  styles?: string;
+  terms?: string;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5034";
 
-// Pure validator
-function validateRegister(data: {
+const countries = [
+  { code: "US", dialCode: "+1", flag: "🇺🇸", name: "United States" },
+  { code: "TH", dialCode: "+66", flag: "🇹🇭", name: "Thailand" },
+  { code: "JP", dialCode: "+81", flag: "🇯🇵", name: "Japan" },
+  { code: "KR", dialCode: "+82", flag: "🇰🇷", name: "South Korea" },
+  { code: "SG", dialCode: "+65", flag: "🇸🇬", name: "Singapore" },
+  { code: "GB", dialCode: "+44", flag: "🇬🇧", name: "United Kingdom" },
+];
+
+const countriesByDialCode = [...countries].sort((a, b) => b.dialCode.length - a.dialCode.length);
+
+function detectCountryFromPhone(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+
+  const plusNormalized = trimmed.startsWith("00") ? `+${trimmed.slice(2)}` : trimmed;
+  const digitsOnly = trimmed.replace(/\D/g, "");
+
+  return countriesByDialCode.find((country) => {
+    const dialDigits = country.dialCode.replace(/\D/g, "");
+    return plusNormalized.startsWith(country.dialCode) || digitsOnly.startsWith(dialDigits);
+  });
+}
+
+function formatPhoneForPayload(phone: string, dialCode: string) {
+  const trimmed = phone.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("+")) return trimmed;
+  if (trimmed.startsWith("00")) return `+${trimmed.slice(2)}`;
+
+  const digitsOnly = trimmed.replace(/\D/g, "");
+  const dialDigits = dialCode.replace(/\D/g, "");
+  if (digitsOnly.startsWith(dialDigits)) return `+${digitsOnly}`;
+
+  return `${dialCode} ${trimmed}`;
+}
+
+const styleOptions: StyleOption[] = [
+  { id: "in-trend", label: "In-trend", imageUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&q=80" },
+  { id: "travel", label: "Travel", imageUrl: "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=500&q=80" },
+  { id: "portrait", label: "Portrait", imageUrl: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80" },
+  { id: "street-art", label: "Street Art", imageUrl: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=500&q=80" },
+  { id: "graduation", label: "Graduation", imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=500&q=80" },
+  { id: "wedding", label: "Wedding", imageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80" },
+  { id: "fashion", label: "Fashion", imageUrl: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=500&q=80" },
+  { id: "food", label: "Food", imageUrl: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=500&q=80" },
+  { id: "couple", label: "Couple", imageUrl: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=500&q=80" },
+  { id: "nature", label: "Nature", imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=500&q=80" },
+  { id: "beach", label: "Beach", imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" },
+  { id: "film", label: "Film", imageUrl: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=500&q=80" },
+];
+
+function validateAccount(data: {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   password: string;
   confirmPassword: string;
+  acceptTerms: boolean;
 }): FieldErrors {
-  const e: FieldErrors = {};
-  if (!data.firstName.trim()) e.firstName = "กรุณากรอกชื่อจริง";
-  if (!data.lastName.trim()) e.lastName = "กรุณากรอกนามสกุล";
-
-  if (!data.email.trim()) e.email = "กรุณากรอกอีเมล";
-  else if (!EMAIL_RE.test(data.email)) e.email = "รูปแบบอีเมลไม่ถูกต้อง";
-
-  if (!data.password) e.password = "กรุณากรอกรหัสผ่าน";
-  else if (data.password.length < 8) e.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
-  else if (!/[A-Za-z]/.test(data.password) || !/\d/.test(data.password))
-    e.password = "ต้องประกอบด้วยตัวอักษรและตัวเลข";
-
-  if (!data.confirmPassword) e.confirmPassword = "กรุณายืนยันรหัสผ่าน";
-  else if (data.confirmPassword !== data.password) e.confirmPassword = "รหัสผ่านไม่ตรงกัน";
-  return e;
-}
-
-// คำนวณคะแนนความแข็งแรงรหัสผ่าน 0-4
-function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[a-z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  // จำกัด 0-4
-  score = Math.min(score, 4);
-
-  const map = [
-    { label: "อ่อนมาก", color: "bg-red-400" },
-    { label: "อ่อน", color: "bg-orange-400" },
-    { label: "ปานกลาง", color: "bg-yellow-400" },
-    { label: "ดี", color: "bg-lime-500" },
-    { label: "แข็งแรง", color: "bg-emerald-500" },
-  ];
-  return { score, ...map[score] };
+  const next: FieldErrors = {};
+  if (!data.firstName.trim()) next.firstName = "First name is required";
+  if (!data.lastName.trim()) next.lastName = "Last name is required";
+  if (!data.email.trim()) next.email = "Email address is required";
+  else if (!EMAIL_RE.test(data.email)) next.email = "Enter a valid email address";
+  if (!data.phone.trim()) next.phone = "Phone number is required";
+  if (!data.password) next.password = "Password is required";
+  else if (data.password.length < 8) next.password = "Use at least 8 characters";
+  if (!data.confirmPassword) next.confirmPassword = "Confirm your password";
+  else if (data.confirmPassword !== data.password) next.confirmPassword = "Passwords do not match";
+  if (!data.acceptTerms) next.terms = "Please agree to the terms before continuing";
+  return next;
 }
 
 export default function RegisterPage() {
   const router = useRouter();
-
-  // Form
+  const [step, setStep] = useState<1 | 2>(1);
   const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [countryCode, setCountryCode] = useState("US");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<Role>("traveler");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
-
-  // UX
-  const [touched, setTouched] = useState<Record<keyof FieldErrors, boolean>>({
-    firstName: false,
-    lastName: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
-  });
+  const [acceptTerms, setAcceptTerms] = useState(true);
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [customStyle, setCustomStyle] = useState("");
+  const [touched, setTouched] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const selectedCountry = countries.find((country) => country.code === countryCode) ?? countries[0];
 
-  const strength = useMemo(() => getPasswordStrength(password), [password]);
+  const errors = useMemo(
+    () =>
+      touched
+        ? validateAccount({ firstName, lastName, email, phone, password, confirmPassword, acceptTerms })
+        : {},
+    [acceptTerms, confirmPassword, email, firstName, lastName, password, phone, touched],
+  );
 
-  // ----- Live validation (derived state) -----
-  const errors = useMemo<FieldErrors>(() => {
-    if (!Object.values(touched).some(Boolean)) return {};
-    return validateRegister({ firstName, lastName, email, password, confirmPassword });
-  }, [firstName, lastName, email, password, confirmPassword, touched]);
+  const handleNext = () => {
+    setTouched(true);
+    const nextErrors = validateAccount({ firstName, lastName, email, phone, password, confirmPassword, acceptTerms });
+    if (Object.keys(nextErrors).length === 0) {
+      setSubmitError(null);
+      setStep(2);
+    }
+  };
 
-  // ----- Submit -----
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePhoneChange = (value: string) => {
+    setPhone(value);
+    const detectedCountry = detectCountryFromPhone(value);
+    if (detectedCountry && detectedCountry.code !== countryCode) {
+      setCountryCode(detectedCountry.code);
+    }
+  };
+
+  const handleSubmit = async () => {
     setSubmitError(null);
-    setIsSuccess(false);
-
-    const v = validateRegister({ firstName, lastName, email, password, confirmPassword });
-    setTouched({
-      firstName: true,
-      lastName: true,
-      email: true,
-      password: true,
-      confirmPassword: true,
-    });
-    if (Object.keys(v).length > 0) return;
-
-    if (!acceptTerms) {
-      setSubmitError("กรุณายอมรับข้อกำหนดและเงื่อนไขก่อนสมัครสมาชิก");
+    if (selectedStyles.length < 3) {
+      setSubmitError("Select at least 3 styles so we can match you better.");
       return;
     }
 
@@ -122,316 +152,152 @@ export default function RegisterPage() {
       const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, firstName, lastName, role }),
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          middleName,
+          lastName,
+          countryCode,
+          phone: formatPhoneForPayload(phone, selectedCountry.dialCode),
+          role: "traveler",
+          preferredStyles: selectedStyles,
+          customStyle,
+        }),
       });
 
       const data = await response.json().catch(() => ({}));
-
       if (!response.ok) {
-        setSubmitError(data?.message ?? "สมัครสมาชิกไม่สำเร็จ");
+        setSubmitError(data?.message ?? "Could not create your account. Please try again.");
         return;
       }
 
-      setIsSuccess(true);
-      // หน่วงสั้น ๆ แล้วพาไป login
-      setTimeout(() => router.push("/login"), 1500);
+      router.push("/login");
     } catch {
-      setSubmitError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง");
+      setSubmitError("Could not connect to the server. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Class helpers
-  const inputBase =
-    "mt-1 block w-full rounded-lg border bg-white px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus-ring transition";
-  const inputOk = "border-slate-300";
-  const inputErr = "border-red-400 focus:ring-red-200 focus:border-red-500";
-  const cls = (key: keyof FieldErrors) =>
-    `${inputBase} ${errors[key] && touched[key] ? inputErr : inputOk}`;
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[color:var(--brand-50)] to-white p-4 py-10">
-      <div className="w-full max-w-lg">
-        <div className="mb-6 text-center">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-2xl font-extrabold tracking-tight text-[color:var(--brand-600)]"
-          >
-            <span className="inline-block h-8 w-8 rounded-md bg-[color:var(--brand-500)] text-white grid place-items-center text-sm">
-              Z
-            </span>
-            Znap<span className="text-[color:var(--brand-400)]">++</span>
-          </Link>
-          <h1 className="mt-4 text-2xl font-bold text-slate-900">สมัครสมาชิก</h1>
-          <p className="mt-1 text-sm text-slate-500">เริ่มต้นสร้างความทรงจำดิจิทัลของคุณ</p>
-        </div>
-
-        <form
-          onSubmit={handleRegister}
-          noValidate
-          className="space-y-5 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm"
-        >
-          {/* Role picker (cards) */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              ฉันต้องการสมัครเป็น
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <RoleCard
-                active={role === "traveler"}
-                onClick={() => setRole("traveler")}
-                title="นักท่องเที่ยว"
-                subtitle="หาช่างภาพ"
-                emoji="🧳"
-              />
-              <RoleCard
-                active={role === "photographer"}
-                onClick={() => setRole("photographer")}
-                title="ช่างภาพ"
-                subtitle="รับงานถ่ายรูป"
-                emoji="📷"
-              />
-            </div>
+    <TravelerAuthShell
+      title={step === 1 ? <>Find your perfect photographer</> : <>WHAT ARE YOU INTO?</>}
+      subtitle={
+        step === 1
+          ? "Create your account and connect with photographers who match your style."
+          : "Tell us your style so we can match you with the right photographers."
+      }
+      illustrationSrc="/illustrations/thai.svg"
+      illustrationAlt="Thai travel illustration"
+    >
+      {step === 1 ? (
+        <div className={styles.panel}>
+          <div className={styles.progressRow}>
+            <StepProgress currentStep={1} totalSteps={2} />
           </div>
+          <h2 className={styles.title}>Sign up now</h2>
 
-          {/* Name */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-slate-700">
-                ชื่อจริง
-              </label>
-              <input
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, firstName: true }))}
-                disabled={isLoading}
-                placeholder="สมชาย"
-                className={cls("firstName")}
-              />
-              {errors.firstName && touched.firstName && (
-                <p className="mt-1 text-xs text-red-600">{errors.firstName}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-slate-700">
-                นามสกุล
-              </label>
-              <input
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, lastName: true }))}
-                disabled={isLoading}
-                placeholder="ใจดี"
-                className={cls("lastName")}
-              />
-              {errors.lastName && touched.lastName && (
-                <p className="mt-1 text-xs text-red-600">{errors.lastName}</p>
-              )}
-            </div>
+          <div className={styles.formGrid}>
+            <Input label="First name" value={firstName} onChange={(event) => setFirstName(event.target.value)} errorText={errors.firstName} />
+            <Input label="Middle name" labelHint="(optional)" value={middleName} onChange={(event) => setMiddleName(event.target.value)} />
           </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700">
-              อีเมล
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-              disabled={isLoading}
-              placeholder="you@example.com"
-              className={cls("email")}
-            />
-            {errors.email && touched.email && (
-              <p className="mt-1 text-xs text-red-600">{errors.email}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-              รหัสผ่าน
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                disabled={isLoading}
-                placeholder="อย่างน้อย 8 ตัว มีตัวอักษรและตัวเลข"
-                className={`${cls("password")} pr-14`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                tabIndex={-1}
-                aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
-                className="absolute inset-y-0 right-2 my-1 px-2 text-xs font-medium text-slate-500 hover:text-[color:var(--brand-600)]"
-              >
-                {showPassword ? "ซ่อน" : "แสดง"}
-              </button>
-            </div>
-
-            {/* strength bar */}
-            {password.length > 0 && (
-              <div className="mt-2">
-                <div className="flex gap-1">
-                  {[0, 1, 2, 3].map((i) => (
-                    <span
-                      key={i}
-                      className={`h-1.5 flex-1 rounded ${
-                        i < strength.score ? strength.color : "bg-slate-200"
-                      }`}
-                    />
+          <Input label="Last name" value={lastName} onChange={(event) => setLastName(event.target.value)} errorText={errors.lastName} />
+          <Input label="Email address" type="email" value={email} onChange={(event) => setEmail(event.target.value)} errorText={errors.email} />
+          <Input
+            label="Phone number"
+            type="tel"
+            value={phone}
+            onChange={(event) => handlePhoneChange(event.target.value)}
+            errorText={errors.phone}
+            leftAddon={
+              <label className={styles.countryPrefix}>
+                <span className={styles.flag} aria-label={selectedCountry.name}>
+                  {selectedCountry.flag}
+                </span>
+                <select
+                  value={countryCode}
+                  onChange={(event) => setCountryCode(event.target.value)}
+                  aria-label="Country code"
+                >
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.code} {country.dialCode}
+                    </option>
                   ))}
-                </div>
-                <p className="mt-1 text-xs text-slate-500">
-                  ความปลอดภัย:{" "}
-                  <span className="font-medium text-slate-700">{strength.label}</span>
-                </p>
-              </div>
-            )}
+                </select>
+              </label>
+            }
+          />
+          <Input
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            errorText={errors.password}
+            helperText="Use 8 or more characters with a mix of letters, numbers & symbols"
+          />
+          <Input
+            label="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            errorText={errors.confirmPassword}
+          />
 
-            {errors.password && touched.password && (
-              <p className="mt-1 text-xs text-red-600">{errors.password}</p>
-            )}
-          </div>
-
-          {/* Confirm password */}
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
-              ยืนยันรหัสผ่าน
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirm ? "text" : "password"}
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, confirmPassword: true }))}
-                disabled={isLoading}
-                placeholder="กรอกรหัสผ่านอีกครั้ง"
-                className={`${cls("confirmPassword")} pr-14`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm((v) => !v)}
-                tabIndex={-1}
-                className="absolute inset-y-0 right-2 my-1 px-2 text-xs font-medium text-slate-500 hover:text-[color:var(--brand-600)]"
-              >
-                {showConfirm ? "ซ่อน" : "แสดง"}
-              </button>
-            </div>
-            {errors.confirmPassword && touched.confirmPassword && (
-              <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          {/* Terms */}
-          <label className="flex items-start gap-2 text-sm text-slate-700">
+          <label className={styles.termsRow}>
             <input
               type="checkbox"
               checked={acceptTerms}
-              onChange={(e) => setAcceptTerms(e.target.checked)}
-              disabled={isLoading}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[color:var(--brand-500)] focus:ring-[color:var(--brand-500)]"
+              onChange={(event) => setAcceptTerms(event.target.checked)}
             />
             <span>
-              ฉันยอมรับ
-              <a href="#" className="mx-1 text-[color:var(--brand-600)] hover:underline">
-                ข้อกำหนดการใช้งาน
-              </a>
-              และ
-              <a href="#" className="mx-1 text-[color:var(--brand-600)] hover:underline">
-                นโยบายความเป็นส่วนตัว
-              </a>
+              By creating an account, I agree to our <Link href="/terms">Terms of use</Link> and{" "}
+              <Link href="/privacy">Privacy Policy</Link>
             </span>
           </label>
 
-          {/* Alerts */}
-          {submitError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-            >
-              {submitError}
-            </div>
-          )}
-          {isSuccess && (
-            <div
-              role="status"
-              className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
-            >
-              สมัครสมาชิกสำเร็จ! กำลังพาท่านไปหน้าเข้าสู่ระบบ…
-            </div>
-          )}
+          {errors.terms ? <div className={styles.errorText}>{errors.terms}</div> : null}
+          {submitError ? <div className={styles.errorText}>{submitError}</div> : null}
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[color:var(--brand-500)] px-4 py-2.5 font-semibold text-white shadow-sm transition hover:bg-[color:var(--brand-600)] focus-ring disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isLoading && (
-              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity=".25" />
-                <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-              </svg>
-            )}
-            {isLoading ? "กำลังสมัครสมาชิก…" : "สมัครสมาชิก"}
-          </button>
-
-          <p className="pt-2 text-center text-sm text-slate-600">
-            มีบัญชีอยู่แล้ว?{" "}
-            <Link href="/login" className="font-semibold text-[color:var(--brand-600)] hover:underline">
-              เข้าสู่ระบบที่นี่
-            </Link>
+          <Button type="button" variant="unstyled" className={styles.primaryButton} onClick={handleNext}>
+            Sign up
+          </Button>
+          <p className={styles.switchText}>
+            Already have an account? <Link href="/login">Log in</Link>
           </p>
-        </form>
-      </div>
-    </div>
-  );
-}
+        </div>
+      ) : (
+        <div className={styles.panel}>
+          <div className={styles.stepHeader}>
+            <Button type="button" variant="unstyled" className={styles.backButton} onClick={() => setStep(1)}>
+              <span aria-hidden="true">{"<-"}</span> Back
+            </Button>
+            <StepProgress currentStep={2} totalSteps={2} />
+          </div>
 
-// ---------- Sub-component: Role card ----------
-function RoleCard({
-  active,
-  onClick,
-  title,
-  subtitle,
-  emoji,
-}: {
-  active: boolean;
-  onClick: () => void;
-  title: string;
-  subtitle: string;
-  emoji: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={`rounded-xl border p-3 text-left transition focus-ring ${
-        active
-          ? "border-[color:var(--brand-500)] bg-[color:var(--brand-50)] ring-2 ring-[color:var(--brand-500)]/30"
-          : "border-slate-200 hover:border-slate-300 bg-white"
-      }`}
-    >
-      <div className="text-2xl">{emoji}</div>
-      <div className="mt-1 font-semibold text-slate-900">{title}</div>
-      <div className="text-xs text-slate-500">{subtitle}</div>
-    </button>
+          <h2 className={styles.titleUpper}>WHAT ARE YOU INTO?</h2>
+          <p className={styles.description}>Select styles you like (choose at least 3)</p>
+          <div className={styles.rule} />
+
+          <StylePreferencePicker options={styleOptions} selected={selectedStyles} onChange={setSelectedStyles} />
+
+          <label className={styles.customStyle}>
+            <span aria-hidden="true">+</span>
+            <input
+              value={customStyle}
+              onChange={(event) => setCustomStyle(event.target.value)}
+              placeholder="Add your own style e.g. Sunset, Korean style, Dark tone, Cozy mood"
+            />
+          </label>
+
+          {submitError ? <div className={styles.errorText}>{submitError}</div> : null}
+
+          <Button type="button" variant="unstyled" className={styles.primaryButton} onClick={handleSubmit} disabled={isLoading}>
+            {isLoading ? "Creating account..." : "Let's Get Started"}
+          </Button>
+        </div>
+      )}
+    </TravelerAuthShell>
   );
 }

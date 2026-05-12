@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TravelerAuthShell } from "@/components/auth";
 import { Button, Input } from "@/components/ui";
@@ -24,11 +24,10 @@ function validateLogin(data: { email: string; password: string }): FieldErrors {
   return next;
 }
 
-export default function LoginPage() {
+export default function PhotographerLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
   const [touched, setTouched] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,16 +36,6 @@ export default function LoginPage() {
     () => (touched ? validateLogin({ email, password }) : {}),
     [email, password, touched],
   );
-
-  useEffect(() => {
-    const saved = localStorage.getItem("znap_remember_email");
-    if (saved) {
-      /* eslint-disable react-hooks/set-state-in-effect */
-      setEmail(saved);
-      setRemember(true);
-      /* eslint-enable react-hooks/set-state-in-effect */
-    }
-  }, []);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -63,18 +52,23 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
         setSubmitError(data?.message ?? "Could not log in. Please check your details.");
         return;
       }
 
-      if (remember) localStorage.setItem("znap_remember_email", email);
-      else localStorage.removeItem("znap_remember_email");
-
       localStorage.setItem("znap_token", data.token);
-      localStorage.setItem("znap_user", JSON.stringify(data.user));
+      localStorage.setItem(
+        "znap_user",
+        JSON.stringify({
+          ...(data.user ?? {}),
+          email,
+          role: "photographer",
+          firstName: data.user?.firstName ?? "Creator",
+        }),
+      );
       router.push("/");
     } catch {
       setSubmitError("Could not connect to the server. Please try again.");
@@ -85,18 +79,18 @@ export default function LoginPage() {
 
   return (
     <TravelerAuthShell
-      title={<>Welcome back, traveler</>}
-      subtitle="Log in to find photographers, manage bookings, and keep your favorite styles close."
-      illustrationSrc="/illustrations/thai.svg"
-      illustrationAlt="Thai travel illustration"
+      tone="photographer"
+      title={<>Stay in control of your work</>}
+      subtitle="Log in to manage jobs and keep your workflow moving"
     >
       <form onSubmit={handleLogin} noValidate className={styles.panel}>
-        <h1 className={styles.title}>Log in</h1>
-        <p className={styles.description}>Continue your photo journey with ZNAP++.</p>
+        <h1 className={styles.title}>Ready to znap++</h1>
+        <p className={styles.description}>Please enter your details to sign in.</p>
 
         <Input
           label="Email address"
           type="email"
+          placeholder="email@example.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           errorText={errors.email}
@@ -106,33 +100,22 @@ export default function LoginPage() {
         <Input
           label="Password"
           type="password"
+          placeholder="enter your password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           errorText={errors.password}
+          helperText="Use 8 or more characters with a mix of letters, numbers & symbols"
           disabled={isLoading}
         />
 
-        <div className={styles.formMeta}>
-          <label className={styles.checkRow}>
-            <input
-              type="checkbox"
-              checked={remember}
-              onChange={(event) => setRemember(event.target.checked)}
-              disabled={isLoading}
-            />
-            Remember me
-          </label>
-          <Link href="/forgot-password">Forgot password?</Link>
-        </div>
-
         {submitError ? <div role="alert" className={styles.errorText}>{submitError}</div> : null}
 
-        <Button type="submit" disabled={isLoading} variant="unstyled" className={styles.primaryButton}>
-          {isLoading ? "Logging in..." : "Log in"}
+        <Button type="submit" variant="unstyled" className={styles.primaryButton} disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Login"}
         </Button>
 
         <p className={styles.switchText}>
-          New to ZNAP++? <Link href="/register">Sign up</Link>
+          Don&apos;t have an account? <Link href="/photographer/register">Sign up</Link>
         </p>
       </form>
     </TravelerAuthShell>
