@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -13,8 +13,19 @@ import styles from "./page.module.css";
  *   &return_to=/dashboard
  * หรือเมื่อ error:
  *   ?error=session_expired
+ *
+ * Next.js 16 ต้องการให้ component ที่ใช้ useSearchParams() อยู่ใน <Suspense>
+ * จึงแยกออกเป็น 2 ชั้น — outer = Suspense wrapper, inner = ใช้ params จริง
  */
 export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <CallbackInner />
+    </Suspense>
+  );
+}
+
+function CallbackInner() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -43,7 +54,6 @@ export default function AuthCallbackPage() {
     }
 
     try {
-      // user param เป็น base64-encoded JSON
       const userJson = atob(decodeURIComponent(userB64));
       const user = JSON.parse(userJson);
 
@@ -53,7 +63,6 @@ export default function AuthCallbackPage() {
       setStatus("success");
       setMessage(`ยินดีต้อนรับ ${user.firstName ?? user.email}`);
 
-      // หน่วงสั้น ๆ ให้คนเห็นข้อความ
       setTimeout(() => {
         router.replace(returnTo);
       }, 800);
@@ -98,6 +107,19 @@ export default function AuthCallbackPage() {
             </div>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+/** UI ที่แสดงระหว่าง Suspense กำลัง resolve searchParams ครั้งแรก */
+function LoadingState() {
+  return (
+    <div className={styles.shell}>
+      <div className={styles.card}>
+        <div className={styles.spinner} />
+        <h1 className={styles.title}>กำลังโหลด…</h1>
+        <p className={styles.subtitle}>กรุณารอสักครู่</p>
       </div>
     </div>
   );
