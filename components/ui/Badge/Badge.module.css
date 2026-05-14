@@ -1,0 +1,83 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.label {
+  line-height: 1.1;
+}
+
+/* Sizes */
+.sizeSm {
+  padding: 4px var(--space-sm);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sizeSm .icon svg { width: 0.7rem; height: 0.7rem; }
+
+.sizeMd {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-xs);
+}
+.sizeMd .icon svg { width: 0.85rem; height: 0.85rem; }
+
+.sizeLg {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+.sizeLg .icon svg { width: 1rem; height: 1rem; }
+
+/* Variants */
+.variantDefault {
+  background: var(--color-background);
+  color: var(--color-primary);
+}
+
+.variantPrimary {
+  background: var(--brand-50);
+  color: var(--color-primary);
+}
+
+.variantSecondary {
+  background: color-mix(in srgb, var(--color-secondary) 14%, transparent);
+  color: var(--color-accent);
+}
+
+.variantSuccess {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.variantWarning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.variantError {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+.variantInfo {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+.variantNeutral {
+  background: var(--color-disabled);
+  color: var(--color-text);
+}

@@ -1,0 +1,93 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-sm) 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  color: var(--color-text);
+  text-decoration: none;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: color var(--transition-normal);
+}
+
+.root:last-child {
+  border-bottom: 0;
+}
+
+.root:hover {
+  color: var(--color-primary);
+}
+
+.root:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* Icon */
+.iconWrap {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--brand-50);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.iconWrap svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.iconSecondary {
+  background: color-mix(in srgb, var(--color-secondary) 14%, transparent);
+  color: var(--color-accent);
+}
+
+.iconMuted {
+  background: var(--color-background);
+  color: var(--color-text-muted);
+}
+
+/* Text */
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Chevron */
+.chevron {
+  display: inline-flex;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.chevron svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.root:hover .chevron {
+  color: var(--color-primary);
+}

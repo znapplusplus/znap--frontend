@@ -1,98 +1,79 @@
 .panel {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  max-width: 500px;
+  gap: var(--space-md);
+  max-width: 460px;
   margin: 0 auto;
-  padding-top: 0.5rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  text-align: center;
+  margin-bottom: var(--space-sm);
 }
 
 .title {
   margin: 0;
   color: var(--color-primary);
   font-family: var(--font-heading);
-  font-size: clamp(1.7rem, 3.2vw, 2.25rem);
+  font-size: clamp(1.5rem, 1rem + 2.2vw, 2rem);
   font-weight: var(--font-weight-bold);
   line-height: 1.1;
 }
 
 .description {
-  margin: 0 0 0.25rem;
+  margin: 0;
   color: var(--color-text-muted);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
 }
 
 .formMeta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  color: var(--color-text-muted);
+  gap: var(--space-md);
   font-size: var(--font-size-sm);
 }
 
-.formMeta a,
-.switchText a {
+.forgotLink {
   color: var(--color-primary);
-}
-
-.checkRow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-}
-
-.checkRow input {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--color-primary);
-}
-
-.primaryButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 44px;
-  margin-top: 0.25rem;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--color-primary);
-  color: var(--color-surface);
-  cursor: pointer;
-  font: inherit;
-  font-size: var(--font-size-sm);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
   font-weight: var(--font-weight-medium);
-  transition: background var(--transition-normal), opacity var(--transition-normal);
 }
 
-.primaryButton:hover {
-  background: var(--color-primary-hover);
-}
-
-.primaryButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
+.forgotLink:hover {
+  color: var(--color-primary-hover);
 }
 
 .switchText {
-  margin: 0.25rem 0 0;
+  margin: 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   text-align: center;
 }
 
-.errorText {
-  border-radius: var(--radius-md);
-  background: var(--color-error-bg);
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  padding: 0.45rem 0.65rem;
+.switchText a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  font-weight: var(--font-weight-semibold);
+}
+
+.socialStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 @media (max-width: 560px) {
   .formMeta {
     align-items: flex-start;
     flex-direction: column;
+    gap: var(--space-sm);
   }
 }

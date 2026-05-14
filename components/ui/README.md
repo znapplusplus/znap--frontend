@@ -1,150 +1,88 @@
-# Shared UI Components
+# `components/ui/`
 
-This folder contains reusable UI components that are used across the application.
+App-agnostic UI primitives. Anything imported from `@/components/ui` should be safe to drop into any page without context.
 
-## Structure
+> Full authoring guide: [`docs/COMPONENT_GUIDE.md`](../../docs/COMPONENT_GUIDE.md)
+> Design tokens reference: [`docs/DESIGN_SYSTEM.md`](../../docs/DESIGN_SYSTEM.md)
 
-Each component has its own folder with:
+## Components
+
+### Foundations
+| Component | Purpose | Doc |
+|---|---|---|
+| `Avatar` | Circular profile image with initials fallback | [README](./Avatar/README.md) |
+| `Badge` | Pill-shaped label / chip with semantic variants | [README](./Badge/README.md) |
+| `Button` | Pill button, also renders as `<Link>` | [README](./Button/README.md) |
+| `Card` | Generic surface wrapper | [README](./Card/README.md) |
+| `Divider` | Horizontal/vertical separator with optional label | [README](./Divider/README.md) |
+| `PriceTag` | Currency-formatted price display | [README](./PriceTag/README.md) |
+| `RatingStars` | Star + rating value + count | [README](./RatingStars/README.md) |
+| `SectionHeader` | Section title + optional "view all" action | [README](./SectionHeader/README.md) |
+
+### Inputs
+| Component | Purpose | Doc |
+|---|---|---|
+| `Input` | Text/email/password/textarea with states | [README](./Input/README.md) |
+| `Checkbox` | Styled checkbox with label & error | [README](./Checkbox/README.md) |
+| `Switch` | On/off toggle (`role="switch"`) | [README](./Switch/README.md) |
+| `Select` | Styled native `<select>` | [README](./Select/README.md) |
+| `TagInput` | Free-form tag chips (Enter / `,` to add) | [README](./TagInput/README.md) |
+| `RangeSlider` | Single-value slider | [README](./RangeSlider/README.md) |
+| `FileUploadCard` | Image upload with preview | [README](./FileUploadCard/README.md) |
+
+### Feedback
+| Component | Purpose | Doc |
+|---|---|---|
+| `Alert` | Inline notification (info/success/warning/error) | [README](./Alert/README.md) |
+| `EmptyState` | Empty list / search / initial state placeholder | [README](./EmptyState/README.md) |
+| `Skeleton` | Animated loading placeholder | [README](./Skeleton/README.md) |
+| `Spinner` | Inline loading spinner | [README](./Spinner/README.md) |
+| `StepProgress` | "Step N of M" progress bar | [README](./StepProgress/README.md) |
+
+### Navigation
+| Component | Purpose | Doc |
+|---|---|---|
+| `Tabs` | Tab strip (underline / pill) | [README](./Tabs/README.md) |
+| `Pagination` | Numbered page navigation | [README](./Pagination/README.md) |
+
+### Overlays
+| Component | Purpose | Doc |
+|---|---|---|
+| `Dialog` | Centered modal dialog | [README](./Dialog/README.md) |
+| `Drawer` | Slide-out panel (left/right/top/bottom) | [README](./Drawer/README.md) |
+| `Tooltip` | Hover label | [README](./Tooltip/README.md) |
+
+### Composites
+| Component | Purpose | Doc |
+|---|---|---|
+| `CategoryTile` | Image card with icon + label (Explore) | [README](./CategoryTile/README.md) |
+| `QuickActionItem` | Row item with icon + title + chevron | [README](./QuickActionItem/README.md) |
+
+## Import
+
+```tsx
+import { Button, Avatar, Badge, Card, Dialog, Drawer } from "@/components/ui";
+```
+
+## Folder shape (required)
 
 ```
 ComponentName/
-  ├── ComponentName.tsx          # React component
-  ├── ComponentName.module.css   # Component styles (CSS Modules)
-  ├── index.ts                   # Barrel export
-  └── README.md                  # Component documentation
+├── ComponentName.tsx
+├── ComponentName.module.css
+├── index.ts
+└── README.md
 ```
 
-### Example: Button
+## Hard rules
 
-```
-Button/
-  ├── Button.tsx
-  ├── Button.module.css
-  ├── index.ts
-  └── README.md
-```
+- ✅ Use design tokens for **every** color/spacing/radius/shadow.
+- ✅ Use CSS Modules — never inline styles, never Tailwind utilities.
+- ✅ Provide `aria-*` and keyboard support out of the box.
+- ❌ Don't put page-specific components here. Move them under `components/sections/` or co-locate.
+- ❌ Don't put layout components here. Move them under `components/layout/`.
+- ❌ Don't put feature-scoped components here. Move them under `components/features/`.
 
-## Importing Components
+## Adding a new component
 
-Use the barrel export from the component folder:
-
-```typescript
-import { Button } from "@/components/ui/Button";
-```
-
-Or import directly from the main UI barrel:
-
-```typescript
-import { Button, Input, Modal } from "@/components/ui";
-```
-
-## Component Guidelines
-
-### 1. Use CSS Modules
-
-All component styles must use CSS Modules (`.module.css`):
-
-```css
-/* Button.module.css */
-.button {
-  height: var(--button-height);
-  padding: 0 var(--space-md);
-  background: var(--color-primary);
-  color: var(--color-surface);
-  border-radius: var(--radius-md);
-  transition: var(--transition-normal);
-}
-
-.button:hover {
-  background: var(--color-primary-hover);
-}
-```
-
-```typescript
-// Button.tsx
-import styles from "./Button.module.css";
-
-export function Button({ children, ...props }) {
-  return (
-    <button className={styles.button} {...props}>
-      {children}
-    </button>
-  );
-}
-```
-
-### 2. Use Design Tokens
-
-**DO:**
-```css
-color: var(--color-primary);
-padding: var(--space-md);
-border-radius: var(--radius-md);
-transition: var(--transition-normal);
-```
-
-**DON'T:**
-```css
-color: #255AB1;
-padding: 16px;
-border-radius: 8px;
-transition: 0.2s;
-```
-
-### 3. No Hardcoded Values
-
-Never hardcode design values. If a token doesn't exist for your use case, add it to `styles/tokens.css`.
-
-### 4. Component Scope Only
-
-This folder is for **shared reusable components only**. Do not place:
-- Page-specific components
-- One-off layouts
-- Business logic components
-
-Move page-specific components to the relevant page folder.
-
-## Current Components
-
-- **Button** — Reusable button with variants (primary, secondary, etc.)
-- **Input** — Text input with validation states
-- **Modal** — Dialog/modal overlay component
-
-## Creating a New Component
-
-1. Create a folder: `NewComponent/`
-2. Create files:
-   - `NewComponent.tsx` — Component logic
-   - `NewComponent.module.css` — Styles using tokens
-   - `index.ts` — Export statement
-   - `README.md` — Usage documentation
-3. Add export to `ui/index.ts`:
-   ```typescript
-   export { NewComponent } from "./NewComponent";
-   ```
-
-## Naming Conventions
-
-- **Folder name:** PascalCase (e.g., `Button`, `FormInput`, `UserCard`)
-- **Component name:** PascalCase matching folder
-- **CSS class names:** camelCase or kebab-case in module
-- **Props:** Follow React naming conventions
-
-## Accessibility
-
-All components must:
-- Support keyboard navigation
-- Include proper ARIA labels where needed
-- Have sufficient color contrast
-- Work with screen readers
-
-## Testing
-
-Each component should have:
-- Basic unit tests
-- Accessibility tests
-- Integration tests if used with other components
-
----
-
-**Questions?** Check the individual component `README.md` files or update design tokens in `styles/tokens.css`.
+See [`docs/COMPONENT_GUIDE.md`](../../docs/COMPONENT_GUIDE.md) for the full checklist and template.

@@ -1,0 +1,38 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star {
+  display: inline-flex;
+  color: var(--color-secondary);
+}
+
+.value {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.count {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Sizes */
+.sizeSm { font-size: var(--font-size-xs); }
+.sizeSm .star svg { width: 0.85rem; height: 0.85rem; }
+
+.sizeMd { font-size: var(--font-size-sm); }
+.sizeMd .star svg { width: 1rem; height: 1rem; }
+
+.sizeLg { font-size: var(--font-size-base); }
+.sizeLg .star svg { width: 1.15rem; height: 1.15rem; }

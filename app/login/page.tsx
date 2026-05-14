@@ -3,8 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { TravelerAuthShell } from "@/components/auth";
-import { Button, Input } from "@/components/ui";
+import { TravelerAuthShell } from "@/components/features";
+import {
+  Button,
+  Divider,
+  Input,
+  SocialAuthButton,
+  type SocialProvider,
+} from "@/components/ui";
 import styles from "./page.module.css";
 
 type FieldErrors = {
@@ -20,7 +26,7 @@ function validateLogin(data: { email: string; password: string }): FieldErrors {
   if (!data.email.trim()) next.email = "Email address is required";
   else if (!EMAIL_RE.test(data.email)) next.email = "Enter a valid email address";
   if (!data.password) next.password = "Password is required";
-  else if (data.password.length < 6) next.password = "Use at least 6 characters";
+  else if (data.password.length < 8) next.password = "Use 8 or more characters";
   return next;
 }
 
@@ -83,56 +89,102 @@ export default function LoginPage() {
     }
   };
 
+  const handleSocial = (provider: SocialProvider) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5034";
+    const role = "traveler";
+    const returnTo = "/";
+    window.location.href =
+      `${API_URL}/api/auth/oauth/${provider}/start` +
+      `?role=${role}&return_to=${encodeURIComponent(returnTo)}`;
+  };
+
   return (
     <TravelerAuthShell
-      title={<>Welcome back, traveler</>}
-      subtitle="Log in to find photographers, manage bookings, and keep your favorite styles close."
+      title={<>Find your perfect photographer</>}
+      subtitle="Sign in to explore and book photographers that match your style."
       illustrationSrc="/illustrations/thai.svg"
       illustrationAlt="Thai travel illustration"
     >
       <form onSubmit={handleLogin} noValidate className={styles.panel}>
-        <h1 className={styles.title}>Log in</h1>
-        <p className={styles.description}>Continue your photo journey with ZNAP++.</p>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Ready to znap++</h1>
+          <p className={styles.description}>Please enter your details to sign in.</p>
+        </header>
 
         <Input
           label="Email address"
           type="email"
+          placeholder="email@example.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           errorText={errors.email}
           disabled={isLoading}
+          autoComplete="email"
+          fullWidth
         />
 
         <Input
           label="Password"
           type="password"
+          placeholder="enter your password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           errorText={errors.password}
+          helperText={
+            errors.password
+              ? undefined
+              : "Use 8 or more characters with a mix of letters, numbers & symbols"
+          }
           disabled={isLoading}
+          autoComplete="current-password"
+          fullWidth
         />
 
-        <div className={styles.formMeta}>
-          <label className={styles.checkRow}>
+        <div className={styles.rememberRow}>
+          <label className={styles.rememberLabel}>
             <input
               type="checkbox"
               checked={remember}
-              onChange={(event) => setRemember(event.target.checked)}
+              onChange={(e) => setRemember(e.target.checked)}
               disabled={isLoading}
             />
-            Remember me
+            <span>Remember me</span>
           </label>
-          <Link href="/forgot-password">Forgot password?</Link>
+          <Link href="/forgot-password" className={styles.forgotLink}>
+            Forgot password?
+          </Link>
         </div>
 
-        {submitError ? <div role="alert" className={styles.errorText}>{submitError}</div> : null}
+        {submitError && (
+          <div className={styles.alertError} role="alert">
+            {submitError}
+          </div>
+        )}
 
-        <Button type="submit" disabled={isLoading} variant="unstyled" className={styles.primaryButton}>
-          {isLoading ? "Logging in..." : "Log in"}
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          fullWidth
+          disabled={isLoading}
+        >
+          {isLoading ? "Signing in…" : "Sign in"}
         </Button>
 
-        <p className={styles.switchText}>
-          New to ZNAP++? <Link href="/register">Sign up</Link>
+        <Divider label="or" />
+
+        <div className={styles.socialStack}>
+          <SocialAuthButton provider="google"   mode="login" onClick={() => handleSocial("google")}   disabled={isLoading} />
+          <SocialAuthButton provider="apple"    mode="login" onClick={() => handleSocial("apple")}    disabled={isLoading} />
+          <SocialAuthButton provider="facebook" mode="login" onClick={() => handleSocial("facebook")} disabled={isLoading} />
+          <SocialAuthButton provider="x"        mode="login" onClick={() => handleSocial("x")}        disabled={isLoading} />
+        </div>
+
+        <p className={styles.footerText}>
+          New to ZNAP++?{" "}
+          <Link href="/register" className={styles.footerLink}>
+            Create an account
+          </Link>
         </p>
       </form>
     </TravelerAuthShell>

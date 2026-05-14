@@ -1,79 +1,130 @@
 :root {
   /*
-   * Colors
+   * ============================================================
+   * Colors — synced with COMPONENT TOKENS SYSTEM design board
+   * ============================================================
    */
-  --color-primary: #255AB1;
-  --color-primary-hover: #1E4E9A;
-  --color-primary-active: #173D7A;
-  --color-secondary: #F29900;
-  --color-background: #F6F6F7;
-  --color-surface: #FFFFFF;
-  --color-card: #FFFFFF;
-  --color-text: #0F172A;
-  --color-text-muted: #64748B;
+
+  /* Primary brand colors */
+  --color-primary: #255AB1;          /* color.primary.blue */
+  --color-primary-hover: #173D7A;    /* color.primary.hover */
+  --color-primary-active: #1E4C99;   /* color.primary.active */
+  --color-secondary: #F29900;        /* color.primary.orange */
+  --color-accent: #D98200;           /* color.accent */
+  --color-secondary-hover: #D98200;  /* alias to accent */
+  --color-secondary-light: #FFB639;  /* light orange / used for highlights */
+
+  /* Surfaces & background */
+  --color-background: #ECECEC;       /* color.background */
+  --color-surface: #F6F6F7;          /* color.primary.white */
+  --color-card: #FFFFFF;             /* pure white card surface */
+  --color-white: #F6F6F7;            /* brand white tone */
+
+  /* Text */
+  --color-text: #484848;             /* color.text.primary */
+  --color-text-muted: #A7A7A7;       /* color.text.secondary */
+  --color-text-caption: #FFB639;     /* color.text.caption */
+
+  /* Borders & disabled */
   --color-border: #E2E8F0;
   --color-border-strong: #A7A7A7;
   --color-disabled: #CBD5E1;
 
-  --color-success: #49D01F;
-  --color-success-bg: #F3FFF0;
-  --color-warning: #FFA409;
-  --color-warning-bg: #FFE7B7;
-  --color-error: #D92C01;
-  --color-error-bg: #F7E1DB;
-  --color-info: #6195E3;
-  --color-info-bg: #E8F0FE;
+  /* Semantic — feedback states */
+  --color-success: #42D01F;          /* color.success */
+  --color-success-bg: #C9FFB7;       /* color.success.bg */
+  --color-success-text: #1F7A35;     /* dark text on success bg */
+  --color-warning: #FFA409;          /* color.warning */
+  --color-warning-bg: #F8CC7F;       /* color.warning.bg */
+  --color-warning-text: #7A5C00;     /* dark text on warning bg */
+  --color-error: #D92C01;            /* color.error */
+  --color-error-bg: #E87B61;         /* color.error.bg */
+  --color-error-text: #7A1F0A;       /* dark text on error bg */
+  --color-info: #2E73DA;             /* color.info */
+  --color-info-bg: #B0CAF0;          /* color.info.bg */
+  --color-info-text: #1B4080;        /* dark text on info bg */
 
-  /* Brand scale aliases for compatibility */
+  /* Brand scale aliases (for gradients / shades) */
   --brand-50:  #EEF3FB;
   --brand-100: #D8E3F4;
   --brand-200: #B1C7E9;
   --brand-300: #8AABDE;
   --brand-400: #5C87CC;
   --brand-500: #255AB1;
-  --brand-600: #214F9D;
-  --brand-700: #1B4080;
-  --brand-800: #163366;
-  --brand-900: #102649;
+  --brand-600: #1E4C99;
+  --brand-700: #173D7A;
+  --brand-800: #102E5C;
+  --brand-900: #0A1E3D;
 
   /*
-   * Typography
+   * ============================================================
+   * Typography — Montserrat (heading) + Poppins (body) + Noto Sans Thai
+   * ============================================================
    */
-  --font-heading: var(--font-geist-sans), var(--font-noto-thai), Arial, Helvetica, sans-serif;
-  --font-body: var(--font-geist-sans), var(--font-noto-thai), Arial, Helvetica, sans-serif;
-  --font-thai: var(--font-noto-thai), var(--font-geist-sans), sans-serif;
+  --font-heading: var(--font-montserrat), var(--font-noto-thai), Arial, Helvetica, sans-serif;
+  --font-body: var(--font-poppins), var(--font-noto-thai), Arial, Helvetica, sans-serif;
+  --font-thai: var(--font-noto-thai), var(--font-poppins), sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --font-size-xs: 0.75rem;   /* 12px */
-  --font-size-sm: 0.875rem;  /* 14px */
-  --font-size-base: 1rem;    /* 16px */
-  --font-size-md: 1.125rem;  /* 18px */
-  --font-size-lg: 1.25rem;   /* 20px */
-  --font-size-xl: 1.5rem;    /* 24px */
-  --font-size-2xl: 2rem;     /* 32px */
-  --font-size-3xl: 2.5rem;   /* 40px */
+  /* Generic scale (desktop default) */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-md: 1.125rem;   /* 18px */
+  --font-size-lg: 1.25rem;    /* 20px */
+  --font-size-xl: 1.5rem;     /* 24px */
+  --font-size-2xl: 2rem;      /* 32px */
+  --font-size-3xl: 2.5rem;    /* 40px */
 
+  /* Heading scale — Desktop */
+  --font-size-h1: 2.5rem;     /* 40px (Bold) */
+  --font-size-h2: 2rem;       /* 32px (Bold) */
+  --font-size-h3: 1.5rem;     /* 24px (Bold) */
+  --font-size-h4: 1.25rem;    /* 20px (Bold) */
+
+  /* Heading scale — Mobile */
+  --font-size-h1-mobile: 1.75rem;   /* 28px */
+  --font-size-h2-mobile: 1.375rem;  /* 22px */
+  --font-size-h3-mobile: 1.125rem;  /* 18px */
+  --font-size-h4-mobile: 1rem;      /* 16px */
+
+  /* Body scale — Desktop */
+  --font-size-body: 1rem;          /* 16px Regular */
+  --font-size-small: 0.875rem;     /* 14px Regular */
+  --font-size-caption: 0.75rem;    /* 12px Regular */
+
+  /* Body scale — Mobile */
+  --font-size-body-mobile: 0.875rem;  /* 14px */
+  --font-size-small-mobile: 0.625rem; /* 10px */
+  --font-size-caption-mobile: 0.5rem; /* 8px — use sparingly, prefer 10–11px for a11y */
+
+  /* Weights */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  /* Line heights */
   --line-height-tight: 1.2;
   --line-height-base: 1.5;
   --line-height-loose: 1.75;
 
   /*
-   * Spacing
+   * ============================================================
+   * Spacing — XS / S / M / L / XL / 2XL
+   * ============================================================
    */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
+  --space-xs: 4px;    /* XS — Very tight spacing */
+  --space-sm: 8px;    /* S  — Small gaps */
+  --space-md: 16px;   /* M  — Default spacing */
+  --space-lg: 24px;   /* L  — Card padding */
+  --space-xl: 32px;   /* XL — Component gap */
+  --space-2xl: 48px;  /* 2XL — Section spacing */
 
   /*
+   * ============================================================
    * Radius
+   * ============================================================
    */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -82,27 +133,35 @@
   --radius-pill: 9999px;
 
   /*
+   * ============================================================
    * Shadows
+   * ============================================================
    */
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
   --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 24px 48px rgba(15, 23, 42, 0.12);
 
   /*
-   * Borders
+   * ============================================================
+   * Borders & focus
+   * ============================================================
    */
   --border-default: 1px solid var(--color-border);
   --focus-ring: 0 0 0 4px rgba(37, 90, 177, 0.18);
 
   /*
+   * ============================================================
    * Motion
+   * ============================================================
    */
   --transition-fast: 0.12s ease-in-out;
   --transition-normal: 0.2s ease-in-out;
   --transition-slow: 0.35s ease-in-out;
 
   /*
+   * ============================================================
    * Component tokens
+   * ============================================================
    */
   --button-height: 44px;
   --input-height: 36px;

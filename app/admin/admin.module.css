@@ -380,22 +380,22 @@
 
 .badgeSuccess {
   background: var(--color-success-bg);
-  color: #1F7A35;
+  color: var(--color-success-text);
 }
 
 .badgeWarning {
   background: var(--color-warning-bg);
-  color: #7A5C00;
+  color: var(--color-warning-text);
 }
 
 .badgeDanger {
   background: var(--color-error-bg);
-  color: var(--color-error);
+  color: var(--color-error-text);
 }
 
 .badgeInfo {
   background: var(--color-info-bg);
-  color: #1B4080;
+  color: var(--color-info-text);
 }
 
 .badgePrimary {
@@ -404,8 +404,8 @@
 }
 
 .badgePurple {
-  background: #F3E8FD;
-  color: #6B21A8;
+  background: var(--brand-100);
+  color: var(--brand-800);
 }
 
 /* ---------- Alert ---------- */
@@ -424,7 +424,7 @@
 
 .alertSuccess {
   background: var(--color-success-bg);
-  color: #1F7A35;
+  color: var(--color-success-text);
   border-color: var(--color-success);
 }
 
@@ -727,7 +727,7 @@
 
 .miniMessageOk {
   background: var(--color-success-bg);
-  color: #1F7A35;
+  color: var(--color-success-text);
 }
 
 .miniMessageError {

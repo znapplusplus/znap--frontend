@@ -1,54 +1,57 @@
 .panel {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-width: 540px;
+  gap: var(--space-md);
+  max-width: 460px;
   margin: 0 auto;
-  padding-top: 0.5rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  text-align: center;
+  margin-bottom: var(--space-sm);
 }
 
 .title {
   margin: 0;
   color: var(--color-secondary);
   font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-size: clamp(1.5rem, 1rem + 2.2vw, 2rem);
   font-weight: var(--font-weight-bold);
   line-height: 1.1;
-  text-align: center;
 }
 
 .description {
-  margin: 0 0 1rem;
+  margin: 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  text-align: center;
 }
 
-.primaryButton {
-  display: inline-flex;
+.formMeta {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 52px;
-  margin-top: 0.5rem;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--color-secondary);
-  color: var(--color-surface);
-  cursor: pointer;
-  font: inherit;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  transition: opacity var(--transition-normal);
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
 }
 
-.primaryButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
+.forgotLink {
+  color: var(--color-secondary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  font-weight: var(--font-weight-medium);
+}
+
+.forgotLink:hover {
+  color: var(--color-accent);
 }
 
 .switchText {
-  margin: 0.2rem 0 0;
+  margin: 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   text-align: center;
@@ -56,12 +59,21 @@
 
 .switchText a {
   color: var(--color-secondary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  font-weight: var(--font-weight-semibold);
 }
 
-.errorText {
-  border-radius: var(--radius-md);
-  background: var(--color-error-bg);
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  padding: 0.45rem 0.65rem;
+.socialStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 560px) {
+  .formMeta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
 }

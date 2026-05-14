@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 380" fill="none">
+  <!-- Shadow -->
+  <ellipse cx="170" cy="355" rx="80" ry="12" fill="#00000018"/>
+
+  <!-- Body -->
+  <ellipse cx="170" cy="235" rx="92" ry="100" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+
+  <!-- Left arm / wing -->
+  <ellipse cx="88" cy="240" rx="22" ry="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" transform="rotate(-30 88 240)"/>
+
+  <!-- Right arm / wing -->
+  <ellipse cx="252" cy="240" rx="22" ry="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" transform="rotate(30 252 240)"/>
+
+  <!-- Camera body -->
+  <rect x="134" y="268" width="72" height="52" rx="8" fill="#1E3A5F" stroke="#152840" stroke-width="1.5"/>
+  <!-- Camera top bump -->
+  <rect x="150" y="260" width="40" height="12" rx="4" fill="#1E3A5F"/>
+  <!-- Camera lens outer -->
+  <circle cx="170" cy="294" r="18" fill="#0F1E30" stroke="#152840" stroke-width="2"/>
+  <!-- Camera lens inner -->
+  <circle cx="170" cy="294" r="12" fill="#1a2e45"/>
+  <circle cx="170" cy="294" r="7" fill="#0a1520"/>
+  <!-- Lens reflection -->
+  <circle cx="165" cy="289" r="3" fill="#FFFFFF" opacity="0.3"/>
+  <!-- Camera flash -->
+  <rect x="140" y="268" width="12" height="7" rx="2" fill="#F0B429"/>
+  <!-- Shutter button -->
+  <circle cx="192" cy="260" r="4" fill="#F29900"/>
+  <!-- Camera strap -->
+  <path d="M134 275 Q110 255 108 230 Q106 210 118 205" stroke="#255AB1" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <path d="M206 275 Q230 255 232 230 Q234 210 222 205" stroke="#255AB1" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+  <!-- Neck -->
+  <rect x="152" y="200" width="36" height="20" rx="4" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+
+  <!-- Head -->
+  <ellipse cx="170" cy="175" rx="70" ry="65" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+
+  <!-- Cap brim -->
+  <ellipse cx="170" cy="122" rx="74" ry="12" fill="#255AB1"/>
+  <!-- Cap top -->
+  <ellipse cx="170" cy="100" rx="60" ry="36" fill="#255AB1"/>
+  <!-- Cap highlight -->
+  <ellipse cx="155" cy="92" rx="14" ry="8" fill="#3B72CC" opacity="0.5"/>
+  <!-- Cap Z letter -->
+  <text x="158" y="115" font-family="Arial, sans-serif" font-size="22" font-weight="900" fill="white" letter-spacing="-1">Z</text>
+
+  <!-- Left eye white -->
+  <circle cx="145" cy="168" r="18" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <!-- Right eye white -->
+  <circle cx="195" cy="168" r="18" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <!-- Left eye iris -->
+  <circle cx="147" cy="170" r="11" fill="#1a1a2e"/>
+  <!-- Right eye iris -->
+  <circle cx="197" cy="170" r="11" fill="#1a1a2e"/>
+  <!-- Left eye shine -->
+  <circle cx="142" cy="165" r="4" fill="white"/>
+  <!-- Right eye shine -->
+  <circle cx="192" cy="165" r="4" fill="white"/>
+  <!-- Left eye small shine -->
+  <circle cx="151" cy="173" r="2" fill="white" opacity="0.6"/>
+  <!-- Right eye small shine -->
+  <circle cx="201" cy="173" r="2" fill="white" opacity="0.6"/>
+
+  <!-- Beak/Mouth -->
+  <ellipse cx="170" cy="197" rx="14" ry="8" fill="#F29900"/>
+  <ellipse cx="170" cy="193" rx="14" ry="6" fill="#FFB340"/>
+
+  <!-- Cheek blush left -->
+  <ellipse cx="130" cy="186" rx="10" ry="6" fill="#FFB3B3" opacity="0.45"/>
+  <!-- Cheek blush right -->
+  <ellipse cx="210" cy="186" rx="10" ry="6" fill="#FFB3B3" opacity="0.45"/>
+
+  <!-- Feet -->
+  <ellipse cx="148" cy="340" rx="24" ry="9" fill="#255AB1" transform="rotate(-10 148 340)"/>
+  <ellipse cx="192" cy="342" rx="24" ry="9" fill="#255AB1" transform="rotate(10 192 342)"/>
+  <rect x="136" y="326" width="20" height="18" rx="4" fill="#3A6BC7"/>
+  <rect x="180" y="326" width="20" height="18" rx="4" fill="#3A6BC7"/>
+</svg>

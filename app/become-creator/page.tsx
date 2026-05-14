@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
+import styles from "./page.module.css";
 
 type StoredUser = {
   id?: string;
@@ -48,7 +49,6 @@ export default function BecomeCreatorPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // ตรวจสิทธิ์ + role
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
     setMounted(true);
@@ -64,7 +64,6 @@ export default function BecomeCreatorPage() {
       const u = JSON.parse(raw) as StoredUser;
       setUser(u);
       if (u.role === "photographer") {
-        // เป็นช่างภาพอยู่แล้ว → เด้งกลับหน้าหลัก
         router.replace("/dashboard");
       }
     } catch {
@@ -94,7 +93,6 @@ export default function BecomeCreatorPage() {
     setIsLoading(true);
     try {
       // TODO: เปลี่ยนไปยิง API จริงเมื่อ Backend มี endpoint POST /api/photographers
-      // ตอนนี้ mock ฝั่ง client ก่อน — อัปเดต role ใน localStorage เพื่อให้ flow ทดสอบได้
       await new Promise((r) => setTimeout(r, 900));
 
       const updated: StoredUser = { ...(user ?? {}), role: "photographer" };
@@ -110,51 +108,36 @@ export default function BecomeCreatorPage() {
     }
   };
 
-  // กันกะพริบระหว่างเช็คสิทธิ์
   if (!mounted || !user) {
-    return (
-      <div className="grid min-h-screen place-items-center text-slate-500">
-        กำลังตรวจสอบสิทธิ์…
-      </div>
-    );
+    return <div className={styles.loading}>กำลังตรวจสอบสิทธิ์…</div>;
   }
 
-  const inputBase =
-    "mt-1 block w-full rounded-lg border bg-white px-3.5 py-2.5 text-slate-900 placeholder:text-slate-400 focus-ring transition";
-  const inputOk = "border-slate-300";
-  const inputErr = "border-red-400 focus:ring-red-200 focus:border-red-500";
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[color:var(--brand-50)] to-white py-10 px-4">
-      <div className="mx-auto max-w-2xl">
+    <div className={styles.page}>
+      <div className={styles.container}>
         {/* Back link */}
-        <div className="mb-4">
-          <Button
-            href="/"
-            variant="unstyled"
-            className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[color:var(--brand-600)]"
-          >
+        <div className={styles.backWrap}>
+          <Button href="/" variant="unstyled" className={styles.backLink}>
             ← กลับหน้าหลัก
           </Button>
         </div>
 
         {/* Header */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--brand-500)] text-white">
-              <CameraIcon className="h-6 w-6" />
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <div className={styles.iconCircle}>
+              <CameraIcon />
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-slate-900">Join as a Creator</h1>
-              <p className="mt-1 text-sm text-slate-500">
-                เพิ่มสถานะ &quot;ช่างภาพ&quot; ให้บัญชีของคุณ
-                — รับงานถ่ายภาพให้นักท่องเที่ยวคนอื่นและสร้างรายได้ระหว่างเดินทาง
+            <div>
+              <h1 className={styles.headerTitle}>Join as a Creator</h1>
+              <p className={styles.headerText}>
+                เพิ่มสถานะ &quot;ช่างภาพ&quot; ให้บัญชีของคุณ —
+                รับงานถ่ายภาพให้นักท่องเที่ยวคนอื่นและสร้างรายได้ระหว่างเดินทาง
               </p>
             </div>
           </div>
 
-          {/* Perks */}
-          <ul className="mt-5 grid grid-cols-1 gap-2 text-sm text-slate-700 sm:grid-cols-2">
+          <ul className={styles.perkList}>
             <Perk text="ตั้งราคาและช่วงเวลาเองได้" />
             <Perk text="ระบบ Escrow ปลอดภัย จ่ายตรงเวลา" />
             <Perk text="โปรไฟล์/พอร์ตเชื่อมกับลูกค้าจริง" />
@@ -163,21 +146,17 @@ export default function BecomeCreatorPage() {
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className="mt-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm"
-        >
-          <div className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+        <form onSubmit={handleSubmit} noValidate className={styles.formCard}>
+          <div className={styles.userPill}>
             สมัครในนามของ:{" "}
-            <span className="font-semibold text-slate-700">
+            <span className={styles.userPillName}>
               {user.firstName} ({user.email})
             </span>
           </div>
 
           {/* Bio */}
-          <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-slate-700">
+          <div className={styles.formGroup}>
+            <label htmlFor="bio" className={styles.label}>
               แนะนำตัว / สไตล์การถ่าย
             </label>
             <textarea
@@ -188,20 +167,20 @@ export default function BecomeCreatorPage() {
               onBlur={() => setTouched((t) => ({ ...t, bio: true }))}
               disabled={isLoading}
               placeholder="เช่น ถ่ายคู่กล้องฟิล์ม Mirrorless, สไตล์ Cinematic, รับงาน Portrait/Cafe/Landmark…"
-              className={`${inputBase} resize-y ${errors.bio && touched.bio ? inputErr : inputOk}`}
+              className={`${styles.textarea} ${errors.bio && touched.bio ? styles.inputError : ""}`}
             />
             {errors.bio && touched.bio && (
-              <p className="mt-1 text-xs text-red-600">{errors.bio}</p>
+              <p className={styles.errorText}>{errors.bio}</p>
             )}
-            <p className="mt-1 text-xs text-slate-400">{bio.trim().length}/500 ตัวอักษร</p>
+            <p className={styles.inputHint}>{bio.trim().length}/500 ตัวอักษร</p>
           </div>
 
           {/* Base price */}
-          <div>
-            <label htmlFor="price" className="block text-sm font-medium text-slate-700">
+          <div className={styles.formGroup}>
+            <label htmlFor="price" className={styles.label}>
               ราคาเริ่มต้น (บาท / ชั่วโมง)
             </label>
-            <div className="relative mt-1">
+            <div className={styles.inputGroup}>
               <input
                 id="price"
                 type="number"
@@ -214,35 +193,33 @@ export default function BecomeCreatorPage() {
                 onBlur={() => setTouched((t) => ({ ...t, basePricePerHr: true }))}
                 disabled={isLoading}
                 placeholder="500"
-                className={`${inputBase} pr-14 ${
-                  errors.basePricePerHr && touched.basePricePerHr ? inputErr : inputOk
+                className={`${styles.input} ${
+                  errors.basePricePerHr && touched.basePricePerHr ? styles.inputError : ""
                 }`}
               />
-              <span className="pointer-events-none absolute inset-y-0 right-3 grid place-items-center text-sm text-slate-400">
-                ฿ / ชม.
-              </span>
+              <span className={styles.suffix}>฿ / ชม.</span>
             </div>
             {errors.basePricePerHr && touched.basePricePerHr && (
-              <p className="mt-1 text-xs text-red-600">{errors.basePricePerHr}</p>
+              <p className={styles.errorText}>{errors.basePricePerHr}</p>
             )}
-            <p className="mt-1 text-xs text-slate-400">
+            <p className={styles.inputHint}>
               แนะนำช่วง ฿199 – ฿1,500 สำหรับ Micro-Session 15–30 นาที
             </p>
           </div>
 
           {/* Terms */}
-          <label className="flex items-start gap-2 text-sm text-slate-700">
+          <label className={styles.checkboxRow}>
             <input
               type="checkbox"
               checked={agree}
               onChange={(e) => setAgree(e.target.checked)}
               disabled={isLoading}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[color:var(--brand-500)] focus:ring-[color:var(--brand-500)]"
+              className={styles.checkbox}
             />
             <span>
               ฉันยอมรับ
-              <a href="#" className="mx-1 text-[color:var(--brand-600)] hover:underline">
-                ข้อกำหนดของช่างภาพ
+              <a href="#" className={styles.termsLink}>
+                {" "}ข้อกำหนดของช่างภาพ{" "}
               </a>
               และยินยอมให้แสดงข้อมูลโปรไฟล์ต่อสาธารณะ
             </span>
@@ -250,49 +227,39 @@ export default function BecomeCreatorPage() {
 
           {/* Alerts */}
           {submitError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-            >
+            <div role="alert" className={styles.alertError}>
               {submitError}
             </div>
           )}
           {isSuccess && (
-            <div
-              role="status"
-              className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
-            >
+            <div role="status" className={styles.alertSuccess}>
               สมัครสำเร็จ! บัญชีของคุณได้รับสถานะช่างภาพแล้ว — กำลังพาท่านไปแดชบอร์ด…
             </div>
           )}
 
           {/* Buttons */}
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className={styles.actionButtons}>
             <Button
               type="submit"
               variant="unstyled"
               disabled={isLoading}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[color:var(--brand-500)] px-4 py-2.5 font-semibold text-white shadow-sm transition hover:bg-[color:var(--brand-600)] focus-ring disabled:cursor-not-allowed disabled:opacity-60"
+              className={styles.buttonPrimary}
             >
               {isLoading && (
-                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <svg className={styles.spinner} viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity=".25" />
                   <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                 </svg>
               )}
               {isLoading ? "กำลังสมัคร…" : "สมัครเป็นช่างภาพ"}
             </Button>
-            <Button
-              href="/"
-              variant="unstyled"
-              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:border-slate-400"
-            >
+            <Button href="/" variant="unstyled" className={styles.buttonSecondary}>
               ยังไม่ตอนนี้
             </Button>
           </div>
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className={styles.noteText}>
           * ขณะนี้ระบบหลังบ้านยังอยู่ระหว่างพัฒนา การสมัครจะถูกบันทึกฝั่งเครื่องชั่วคราว
         </p>
       </div>
@@ -303,16 +270,16 @@ export default function BecomeCreatorPage() {
 // ---------------- Sub-components ----------------
 function Perk({ text }: { text: string }) {
   return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1 inline-block h-2 w-2 shrink-0 rounded-full bg-[color:var(--brand-500)]" />
+    <li className={styles.perkItem}>
+      <span className={styles.perkDot} />
       {text}
     </li>
   );
 }
 
-function CameraIcon({ className = "" }: { className?: string }) {
+function CameraIcon() {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M4 8a2 2 0 0 1 2-2h2.5l1.2-1.6A2 2 0 0 1 11.3 4h1.4a2 2 0 0 1 1.6.8L15.5 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z"
         stroke="currentColor"

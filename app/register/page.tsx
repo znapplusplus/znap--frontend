@@ -3,8 +3,18 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { StepProgress, StylePreferencePicker, TravelerAuthShell, type StyleOption } from "@/components/auth";
-import { Button, Input } from "@/components/ui";
+import { StylePreferencePicker, TravelerAuthShell, type StyleOption } from "@/components/features";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Divider,
+  Input,
+  SocialAuthButton,
+  StepProgress,
+  type SocialProvider,
+} from "@/components/ui";
+import { ArrowLeftIcon, PlusIcon } from "@/components/ui/icons";
 import styles from "./page.module.css";
 
 type FieldErrors = {
@@ -153,7 +163,7 @@ export default function RegisterPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
+          email: email.trim().toLowerCase(),
           password,
           firstName,
           middleName,
@@ -180,9 +190,18 @@ export default function RegisterPage() {
     }
   };
 
+  const handleSocial = (provider: SocialProvider) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5034";
+    const role = "traveler";
+    const returnTo = "/";
+    window.location.href =
+      `${API_URL}/api/auth/oauth/${provider}/start` +
+      `?role=${role}&return_to=${encodeURIComponent(returnTo)}`;
+  };
+
   return (
     <TravelerAuthShell
-      title={step === 1 ? <>Find your perfect photographer</> : <>WHAT ARE YOU INTO?</>}
+      title={step === 1 ? <>Find your perfect photographer</> : <>What are you into?</>}
       subtitle={
         step === 1
           ? "Create your account and connect with photographers who match your style."
@@ -196,20 +215,52 @@ export default function RegisterPage() {
           <div className={styles.progressRow}>
             <StepProgress currentStep={1} totalSteps={2} />
           </div>
-          <h2 className={styles.title}>Sign up now</h2>
+          <header className={styles.header}>
+            <h2 className={styles.title}>Sign up now</h2>
+            <p className={styles.description}>It only takes a minute to get started.</p>
+          </header>
 
           <div className={styles.formGrid}>
-            <Input label="First name" value={firstName} onChange={(event) => setFirstName(event.target.value)} errorText={errors.firstName} />
-            <Input label="Middle name" labelHint="(optional)" value={middleName} onChange={(event) => setMiddleName(event.target.value)} />
+            <Input
+              label="First name"
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+              errorText={errors.firstName}
+              fullWidth
+            />
+            <Input
+              label="Middle name"
+              labelHint="(optional)"
+              value={middleName}
+              onChange={(event) => setMiddleName(event.target.value)}
+              fullWidth
+            />
           </div>
-          <Input label="Last name" value={lastName} onChange={(event) => setLastName(event.target.value)} errorText={errors.lastName} />
-          <Input label="Email address" type="email" value={email} onChange={(event) => setEmail(event.target.value)} errorText={errors.email} />
+          <Input
+            label="Last name"
+            value={lastName}
+            onChange={(event) => setLastName(event.target.value)}
+            errorText={errors.lastName}
+            fullWidth
+          />
+          <Input
+            label="Email address"
+            type="email"
+            placeholder="email@example.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            errorText={errors.email}
+            autoComplete="email"
+            fullWidth
+          />
           <Input
             label="Phone number"
             type="tel"
             value={phone}
             onChange={(event) => handlePhoneChange(event.target.value)}
             errorText={errors.phone}
+            autoComplete="tel"
+            fullWidth
             leftAddon={
               <label className={styles.countryPrefix}>
                 <span className={styles.flag} aria-label={selectedCountry.name}>
@@ -232,72 +283,71 @@ export default function RegisterPage() {
           <Input
             label="Password"
             type="password"
+            placeholder="enter your password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             errorText={errors.password}
-            helperText="Use 8 or more characters with a mix of letters, numbers & symbols"
+            helperText={
+              errors.password
+                ? undefined
+                : "Use 8 or more characters with a mix of letters, numbers & symbols"
+            }
+            autoComplete="new-password"
+            fullWidth
           />
           <Input
-            label="Confirm Password"
+            label="Confirm password"
             type="password"
+            placeholder="re-enter your password"
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
             errorText={errors.confirmPassword}
+            autoComplete="new-password"
+            fullWidth
           />
 
-          <label className={styles.termsRow}>
-            <input
-              type="checkbox"
-              checked={acceptTerms}
-              onChange={(event) => setAcceptTerms(event.target.checked)}
-            />
-            <span>
-              By creating an account, I agree to our <Link href="/terms">Terms of use</Link> and{" "}
-              <Link href="/privacy">Privacy Policy</Link>
-            </span>
-          </label>
+          <Checkbox
+            checked={acceptTerms}
+            onChange={(event) => setAcceptTerms(event.target.checked)}
+            label={
+              <span className={styles.termsText}>
+                By creating an account, I agree to our{" "}
+                <Link href="/terms">Terms of use</Link> and{" "}
+                <Link href="/privacy">Privacy Policy</Link>.
+              </span>
+            }
+            errorText={errors.terms}
+          />
 
-          {errors.terms ? <div className={styles.errorText}>{errors.terms}</div> : null}
-          {submitError ? <div className={styles.errorText}>{submitError}</div> : null}
+          {submitError ? (
+            <Alert variant="error" onClose={() => setSubmitError(null)}>
+              {submitError}
+            </Alert>
+          ) : null}
 
-          <Button type="button" variant="unstyled" className={styles.primaryButton} onClick={handleNext}>
+          <Button type="button" onClick={handleNext} fullWidth size="lg" disabled={isLoading}>
             Sign up
           </Button>
+
           <p className={styles.switchText}>
             Already have an account? <Link href="/login">Log in</Link>
           </p>
+
+          <Divider label="or" />
+
+          <div className={styles.socialStack}>
+            <SocialAuthButton provider="google"   onClick={() => handleSocial("google")}   disabled={isLoading} />
+            <SocialAuthButton provider="apple"    onClick={() => handleSocial("apple")}    disabled={isLoading} />
+            <SocialAuthButton provider="facebook" onClick={() => handleSocial("facebook")} disabled={isLoading} />
+            <SocialAuthButton provider="x"        onClick={() => handleSocial("x")}        disabled={isLoading} />
+          </div>
         </div>
       ) : (
         <div className={styles.panel}>
-          <div className={styles.stepHeader}>
-            <Button type="button" variant="unstyled" className={styles.backButton} onClick={() => setStep(1)}>
-              <span aria-hidden="true">{"<-"}</span> Back
-            </Button>
-            <StepProgress currentStep={2} totalSteps={2} />
-          </div>
-
-          <h2 className={styles.titleUpper}>WHAT ARE YOU INTO?</h2>
-          <p className={styles.description}>Select styles you like (choose at least 3)</p>
-          <div className={styles.rule} />
-
-          <StylePreferencePicker options={styleOptions} selected={selectedStyles} onChange={setSelectedStyles} />
-
-          <label className={styles.customStyle}>
-            <span aria-hidden="true">+</span>
-            <input
-              value={customStyle}
-              onChange={(event) => setCustomStyle(event.target.value)}
-              placeholder="Add your own style e.g. Sunset, Korean style, Dark tone, Cozy mood"
-            />
-          </label>
-
-          {submitError ? <div className={styles.errorText}>{submitError}</div> : null}
-
-          <Button type="button" variant="unstyled" className={styles.primaryButton} onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Creating account..." : "Let's Get Started"}
-          </Button>
+          <p className={styles.switchText}>Step 2 — coming soon</p>
         </div>
       )}
     </TravelerAuthShell>
   );
 }
+            

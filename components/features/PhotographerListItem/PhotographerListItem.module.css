@@ -1,0 +1,53 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-sm) 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.root:hover .name {
+  color: var(--color-primary);
+}
+
+.root:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-md);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.2;
+  transition: color var(--transition-normal);
+}
+
+.location {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Dense */
+.sizeSm .name {
+  font-size: var(--font-size-sm);
+}
+.sizeSm .location {
+  font-size: 0.7rem;
+}

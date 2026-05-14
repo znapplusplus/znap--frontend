@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import styles from "./page.module.css";
 
 type Role = "traveler" | "photographer";
 type ZnapUser = {
@@ -45,70 +46,62 @@ export default function DashboardPage() {
   };
 
   if (!user) {
-    return (
-      <div className="grid min-h-screen place-items-center text-slate-500">
-        กำลังตรวจสอบสิทธิ์…
-      </div>
-    );
+    return <div className={styles.loading}>กำลังตรวจสอบสิทธิ์…</div>;
   }
 
   const role: Role = user.role === "photographer" ? "photographer" : "traveler";
   const isTraveler = role === "traveler";
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* =================== TOPBAR =================== */}
+    <div className={styles.page}>
       <Topbar user={user} role={role} onLogout={handleLogout} />
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <main className={styles.pageContent}>
         {/* =================== WELCOME BANNER =================== */}
-        <section className="rounded-2xl border border-[color:var(--brand-100)] bg-gradient-to-r from-[color:var(--brand-500)] to-[color:var(--brand-700)] p-6 text-white shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <section className={styles.banner}>
+          <div className={styles.bannerTop}>
             <div>
-              <h1 className="text-2xl font-bold sm:text-3xl">
+              <h1 className={styles.bannerTitle}>
                 สวัสดี, {user.firstName} 👋
               </h1>
-              <p className="mt-1 text-sm text-white/85">
+              <p className={styles.bannerText}>
                 {isTraveler
                   ? "พร้อมตามล่ามุมสวยในทริปต่อไปแล้วหรือยัง?"
                   : "พร้อมเก็บโมเมนต์ดี ๆ ของลูกค้าใหม่วันนี้แล้วหรือยัง?"}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider backdrop-blur">
+            <div className={styles.bannerBadges}>
+              <span className={styles.roleBadge}>
                 {isTraveler ? "🧳 Traveler" : "📷 Photographer"}
               </span>
-              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur">
-                {user.email}
-              </span>
+              <span className={styles.bannerEmail}>{user.email}</span>
             </div>
           </div>
         </section>
 
         {/* =================== STATS =================== */}
-        <section className="mt-6">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
-            ภาพรวมของคุณ
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>ภาพรวมของคุณ</h2>
+          </div>
+          <div className={`${styles.gridCards} ${styles.gridStats}`}>
             {(isTraveler ? travelerStats : photographerStats).map((s) => (
               <StatCard key={s.label} {...s} />
             ))}
           </div>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className={styles.helperText}>
             * ตัวเลขเป็น 0 ทั้งหมดเนื่องจากระบบจองยังไม่เริ่มใช้งานจริง
           </p>
         </section>
 
         {/* =================== AVAILABLE NOW =================== */}
-        <section className="mt-8">
+        <section className={styles.section}>
           <SectionHeader
             title="สิ่งที่ทำได้ตอนนี้"
             subtitle="ฟีเจอร์ที่เปิดใช้งานได้แล้วในเฟสปัจจุบัน"
             badge={{ text: "พร้อมใช้", tone: "ok" }}
           />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {/* ทุก role */}
+          <div className={`${styles.gridCards} ${styles.gridActions}`}>
             <ActionCard
               icon="👤"
               title="ดู / จัดการโปรไฟล์"
@@ -122,7 +115,6 @@ export default function DashboardPage() {
               cta={{ label: "ไปหน้าหลัก", href: "/", variant: "secondary" }}
             />
 
-            {/* Traveler-only */}
             {isTraveler && (
               <ActionCard
                 icon="📷"
@@ -137,7 +129,6 @@ export default function DashboardPage() {
               />
             )}
 
-            {/* Photographer-only */}
             {!isTraveler && (
               <ActionCard
                 icon="✅"
@@ -158,7 +149,7 @@ export default function DashboardPage() {
         </section>
 
         {/* =================== COMING SOON =================== */}
-        <section className="mt-8">
+        <section className={styles.section}>
           <SectionHeader
             title="เร็ว ๆ นี้"
             subtitle={
@@ -168,7 +159,7 @@ export default function DashboardPage() {
             }
             badge={{ text: "Coming Soon", tone: "warn" }}
           />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={`${styles.gridCards} ${styles.gridActions}`}>
             {(isTraveler ? travelerComingSoon : photographerComingSoon).map((c) => (
               <ComingSoonCard key={c.title} {...c} />
             ))}
@@ -176,37 +167,37 @@ export default function DashboardPage() {
         </section>
 
         {/* =================== PROFILE INFO =================== */}
-        <section id="profile-info" className="mt-8 scroll-mt-24">
+        <section id="profile-info" className={styles.section}>
           <SectionHeader title="ข้อมูลบัญชี" subtitle="ข้อมูลที่ระบบเก็บไว้ของคุณ" />
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+          <div className={styles.infoTable}>
             <InfoRow label="ชื่อ" value={user.firstName ?? "—"} />
             <InfoRow label="อีเมล" value={user.email ?? "—"} />
             <InfoRow
               label="บทบาท"
               value={
-                <span className="rounded-full bg-[color:var(--brand-50)] px-2 py-0.5 text-xs font-semibold text-[color:var(--brand-700)]">
+                <span className={styles.infoChip}>
                   {isTraveler ? "Traveler" : "Photographer"}
                 </span>
               }
             />
-            <InfoRow label="User ID" value={<code className="text-xs text-slate-500">{user.id ?? "—"}</code>} last />
+            <InfoRow label="User ID" value={<code className={styles.infoCode}>{user.id ?? "—"}</code>} />
           </div>
         </section>
 
         {/* =================== PROJECT STATUS =================== */}
-        <section className="mt-8">
+        <section className={styles.section}>
           <SectionHeader
             title="สถานะการพัฒนาระบบ"
             subtitle="ความคืบหน้าของแต่ละโมดูลใน Znap++"
           />
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-            {moduleStatus.map((m, i) => (
-              <ModuleRow key={m.name} {...m} last={i === moduleStatus.length - 1} />
+          <div className={styles.statusList}>
+            {moduleStatus.map((m) => (
+              <ModuleRow key={m.name} {...m} />
             ))}
           </div>
         </section>
 
-        <footer className="mt-10 pb-6 text-center text-xs text-slate-400">
+        <footer className={styles.footer}>
           Znap++ Dashboard · เวอร์ชันพัฒนา (alpha)
         </footer>
       </main>
@@ -233,69 +224,21 @@ const photographerStats: StatProps[] = [
 ];
 
 const travelerComingSoon: ComingSoonProps[] = [
-  {
-    icon: "🔍",
-    title: "ค้นหาช่างภาพใกล้คุณ",
-    desc: "หา Photography Buddy ที่ออนไลน์อยู่ในรัศมีที่กำหนด (PostGIS-powered)",
-  },
-  {
-    icon: "📷",
-    title: "จอง Micro-Session 15–30 นาที",
-    desc: "เลือกแพ็คเกจ ระบุจุดถ่าย พร้อมแนบรูปอ้างอิงสไตล์ที่ต้องการ",
-  },
-  {
-    icon: "💳",
-    title: "ชำระเงินผ่าน Escrow",
-    desc: "เงินถูกถือไว้อย่างปลอดภัยจนกว่าคุณจะได้รับรูปครบถ้วน",
-  },
-  {
-    icon: "🖼️",
-    title: "ดาวน์โหลดภาพคุณภาพสูง",
-    desc: "ปลดล็อกไฟล์ Hi-Res พร้อมรูปเพิ่มเติมในแพ็คเกจอัปเซลล์",
-  },
-  {
-    icon: "⭐",
-    title: "ให้รีวิวและคะแนน",
-    desc: "ช่วยช่างภาพคนต่อ ๆ ไปด้วยการเขียนรีวิวจากประสบการณ์จริง",
-  },
-  {
-    icon: "🗺️",
-    title: "แผนที่จุดถ่ายแนะนำ",
-    desc: "ค้นพบ Featured Spots จาก Cafe / Landmark ที่เป็นพาร์ทเนอร์",
-  },
+  { icon: "🔍", title: "ค้นหาช่างภาพใกล้คุณ", desc: "หา Photography Buddy ที่ออนไลน์อยู่ในรัศมีที่กำหนด (PostGIS-powered)" },
+  { icon: "📷", title: "จอง Micro-Session 15–30 นาที", desc: "เลือกแพ็คเกจ ระบุจุดถ่าย พร้อมแนบรูปอ้างอิงสไตล์ที่ต้องการ" },
+  { icon: "💳", title: "ชำระเงินผ่าน Escrow", desc: "เงินถูกถือไว้อย่างปลอดภัยจนกว่าคุณจะได้รับรูปครบถ้วน" },
+  { icon: "🖼️", title: "ดาวน์โหลดภาพคุณภาพสูง", desc: "ปลดล็อกไฟล์ Hi-Res พร้อมรูปเพิ่มเติมในแพ็คเกจอัปเซลล์" },
+  { icon: "⭐", title: "ให้รีวิวและคะแนน", desc: "ช่วยช่างภาพคนต่อ ๆ ไปด้วยการเขียนรีวิวจากประสบการณ์จริง" },
+  { icon: "🗺️", title: "แผนที่จุดถ่ายแนะนำ", desc: "ค้นพบ Featured Spots จาก Cafe / Landmark ที่เป็นพาร์ทเนอร์" },
 ];
 
 const photographerComingSoon: ComingSoonProps[] = [
-  {
-    icon: "📅",
-    title: "จัดการตารางว่าง",
-    desc: "เปิด/ปิดสถานะออนไลน์ พร้อมตั้ง Time Slot ที่รับงานได้",
-  },
-  {
-    icon: "💼",
-    title: "สร้างพอร์ตโฟลิโอ",
-    desc: "อัปโหลดผลงานเด่น แสดงสไตล์การถ่ายให้ลูกค้าเห็นก่อนจอง",
-  },
-  {
-    icon: "💰",
-    title: "ตั้งราคา / แพ็คเกจ",
-    desc: "ปรับราคาเริ่มต้น สร้างแพ็คเกจ Micro-Session ของคุณเอง",
-  },
-  {
-    icon: "🔔",
-    title: "รับงานเข้ามาแบบ Real-time",
-    desc: "แจ้งเตือนทันทีเมื่อมีนักท่องเที่ยวใกล้คุณส่งคำขอจอง",
-  },
-  {
-    icon: "🏦",
-    title: "ถอนเงินจาก Wallet",
-    desc: "ดูยอดคงเหลือใน Escrow และโอนออกได้เมื่อจบงาน",
-  },
-  {
-    icon: "⭐",
-    title: "ระบบรีวิว / Rating",
-    desc: "สะสมคะแนนความน่าเชื่อถือเพื่อรับงานง่ายขึ้น",
-  },
+  { icon: "📅", title: "จัดการตารางว่าง", desc: "เปิด/ปิดสถานะออนไลน์ พร้อมตั้ง Time Slot ที่รับงานได้" },
+  { icon: "💼", title: "สร้างพอร์ตโฟลิโอ", desc: "อัปโหลดผลงานเด่น แสดงสไตล์การถ่ายให้ลูกค้าเห็นก่อนจอง" },
+  { icon: "💰", title: "ตั้งราคา / แพ็คเกจ", desc: "ปรับราคาเริ่มต้น สร้างแพ็คเกจ Micro-Session ของคุณเอง" },
+  { icon: "🔔", title: "รับงานเข้ามาแบบ Real-time", desc: "แจ้งเตือนทันทีเมื่อมีนักท่องเที่ยวใกล้คุณส่งคำขอจอง" },
+  { icon: "🏦", title: "ถอนเงินจาก Wallet", desc: "ดูยอดคงเหลือใน Escrow และโอนออกได้เมื่อจบงาน" },
+  { icon: "⭐", title: "ระบบรีวิว / Rating", desc: "สะสมคะแนนความน่าเชื่อถือเพื่อรับงานง่ายขึ้น" },
 ];
 
 const moduleStatus: ModuleStatus[] = [
@@ -324,33 +267,24 @@ function Topbar({
   onLogout: () => void;
 }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-[color:var(--brand-600)]"
-        >
-          <span className="inline-block h-8 w-8 rounded-md bg-[color:var(--brand-500)] text-white grid place-items-center text-sm">
-            Z
-          </span>
-          Znap<span className="text-[color:var(--brand-400)]">++</span>
-          <span className="ml-1 hidden text-xs font-medium uppercase tracking-wider text-slate-400 sm:inline">
-            / Dashboard
-          </span>
+    <header className={styles.topbar}>
+      <div className={styles.topbarInner}>
+        <Link href="/" className={styles.brandLink}>
+          <span className={styles.brandMark}>Z</span>
+          Znap++
+          <span className={styles.brandSlash}>/ Dashboard</span>
         </Link>
 
-        <div className="flex items-center gap-2">
-          <span className="hidden text-sm text-slate-600 sm:inline">
-            {user.firstName}{" "}
-            <span className="ml-1 rounded-full bg-[color:var(--brand-50)] px-2 py-0.5 text-[10px] font-bold uppercase text-[color:var(--brand-700)]">
-              {role}
-            </span>
+        <div className={styles.topbarActions}>
+          <span className={styles.topbarUser}>
+            {user.firstName}
+            <span className={styles.topbarRole}>{role}</span>
           </span>
           <Button
             type="button"
             variant="unstyled"
             onClick={onLogout}
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:border-red-300 hover:bg-red-50 hover:text-red-700"
+            className={styles.topButton}
           >
             ออกจากระบบ
           </Button>
@@ -372,23 +306,17 @@ function SectionHeader({
 }) {
   const toneCls =
     badge?.tone === "ok"
-      ? "bg-emerald-100 text-emerald-700"
+      ? styles.badgeOk
       : badge?.tone === "warn"
-      ? "bg-amber-100 text-amber-700"
-      : "bg-slate-100 text-slate-600";
+        ? styles.badgeWarn
+        : styles.badgeMuted;
   return (
-    <div className="mb-3 flex items-end justify-between">
+    <div className={styles.sectionHeader}>
       <div>
-        <h2 className="text-base font-bold text-slate-900 sm:text-lg">{title}</h2>
-        {subtitle && <p className="text-xs text-slate-500 sm:text-sm">{subtitle}</p>}
+        <h2 className={styles.sectionHeaderTitle}>{title}</h2>
+        {subtitle && <p className={styles.sectionHeaderSubtitle}>{subtitle}</p>}
       </div>
-      {badge && (
-        <span
-          className={`whitespace-nowrap rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${toneCls}`}
-        >
-          {badge.text}
-        </span>
-      )}
+      {badge && <span className={`${styles.badgePill} ${toneCls}`}>{badge.text}</span>}
     </div>
   );
 }
@@ -397,13 +325,13 @@ function SectionHeader({
 type StatProps = { label: string; value: string; hint?: string; icon?: string };
 function StatCard({ label, value, hint, icon }: StatProps) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-slate-500">{label}</span>
-        <span className="text-base">{icon}</span>
+    <div className={styles.statCard}>
+      <div className={styles.statTop}>
+        <span className={styles.statLabel}>{label}</span>
+        <span className={styles.statIcon}>{icon}</span>
       </div>
-      <div className="mt-2 text-2xl font-extrabold text-slate-900">{value}</div>
-      {hint && <div className="mt-0.5 text-[11px] text-slate-400">{hint}</div>}
+      <div className={styles.statValue}>{value}</div>
+      {hint && <div className={styles.statHint}>{hint}</div>}
     </div>
   );
 }
@@ -426,28 +354,22 @@ function ActionCard({
 }) {
   const btnCls =
     cta.variant === "primary"
-      ? "bg-[color:var(--brand-500)] text-white hover:bg-[color:var(--brand-600)]"
+      ? styles.actionButtonPrimary
       : cta.variant === "danger"
-      ? "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
-      : "border border-slate-300 bg-white text-slate-700 hover:border-[color:var(--brand-500)] hover:text-[color:var(--brand-600)]";
+        ? styles.actionButtonDanger
+        : styles.actionButtonSecondary;
 
   return (
-    <div
-      className={`flex flex-col rounded-xl border p-5 shadow-sm transition ${
-        highlight
-          ? "border-[color:var(--brand-200)] bg-[color:var(--brand-50)]"
-          : "border-slate-200 bg-white"
-      }`}
-    >
-      <div className="text-2xl">{icon}</div>
-      <h3 className="mt-2 text-sm font-bold text-slate-900">{title}</h3>
-      <p className="mt-1 flex-1 text-xs text-slate-600">{desc}</p>
-      <div className="mt-4">
+    <div className={`${styles.actionCard} ${highlight ? styles.actionCardHighlight : ""}`}>
+      <div className={styles.actionIcon}>{icon}</div>
+      <h3 className={styles.actionTitle}>{title}</h3>
+      <p className={styles.actionDesc}>{desc}</p>
+      <div>
         {cta.href ? (
           <Button
             href={cta.href}
             variant="unstyled"
-            className={`inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold transition focus-ring ${btnCls}`}
+            className={`${styles.actionButton} ${btnCls}`}
           >
             {cta.label}
           </Button>
@@ -456,7 +378,7 @@ function ActionCard({
             type="button"
             variant="unstyled"
             onClick={onClick}
-            className={`inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold transition focus-ring ${btnCls}`}
+            className={`${styles.actionButton} ${btnCls}`}
           >
             {cta.label}
           </Button>
@@ -470,20 +392,13 @@ function ActionCard({
 type ComingSoonProps = { icon: string; title: string; desc: string };
 function ComingSoonCard({ icon, title, desc }: ComingSoonProps) {
   return (
-    <div className="relative flex flex-col rounded-xl border border-dashed border-slate-200 bg-slate-50/60 p-5">
-      <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">
-        เร็ว ๆ นี้
-      </span>
-      <div className="text-2xl opacity-60 grayscale">{icon}</div>
-      <h3 className="mt-2 text-sm font-bold text-slate-700">{title}</h3>
-      <p className="mt-1 text-xs text-slate-500">{desc}</p>
-      <div className="mt-4">
-        <Button
-          type="button"
-          variant="unstyled"
-          disabled
-          className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-lg border border-slate-200 bg-white/50 px-3 py-2 text-xs font-medium text-slate-400"
-        >
+    <div className={styles.comingCard}>
+      <span className={styles.comingTag}>เร็ว ๆ นี้</span>
+      <div className={styles.comingIcon}>{icon}</div>
+      <h3 className={styles.comingTitle}>{title}</h3>
+      <p className={styles.comingDesc}>{desc}</p>
+      <div>
+        <Button type="button" variant="unstyled" disabled className={styles.comingButton}>
           ยังใช้งานไม่ได้
         </Button>
       </div>
@@ -492,23 +407,11 @@ function ComingSoonCard({ icon, title, desc }: ComingSoonProps) {
 }
 
 // ---------- Info Row ----------
-function InfoRow({
-  label,
-  value,
-  last,
-}: {
-  label: string;
-  value: React.ReactNode;
-  last?: boolean;
-}) {
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div
-      className={`flex items-center justify-between px-4 py-3 sm:px-5 ${
-        last ? "" : "border-b border-slate-100"
-      }`}
-    >
-      <span className="text-xs font-medium text-slate-500 sm:text-sm">{label}</span>
-      <span className="text-sm font-semibold text-slate-900">{value}</span>
+    <div className={styles.infoRow}>
+      <span className={styles.infoLabel}>{label}</span>
+      <span className={styles.infoValue}>{value}</span>
     </div>
   );
 }
@@ -519,32 +422,34 @@ type ModuleStatus = {
   state: "done" | "partial" | "todo";
   note?: string;
 };
-function ModuleRow({ name, state, note, last }: ModuleStatus & { last?: boolean }) {
-  const cfg =
+function ModuleRow({ name, state, note }: ModuleStatus) {
+  const dotCls =
     state === "done"
-      ? { dot: "bg-emerald-500", label: "พร้อมใช้งาน", cls: "text-emerald-700 bg-emerald-50" }
+      ? styles.statusDotDone
       : state === "partial"
-      ? { dot: "bg-amber-500", label: "กำลังพัฒนา", cls: "text-amber-700 bg-amber-50" }
-      : { dot: "bg-slate-300", label: "ยังไม่เริ่ม", cls: "text-slate-600 bg-slate-100" };
+        ? styles.statusDotPartial
+        : styles.statusDotTodo;
+
+  const labelCls =
+    state === "done"
+      ? styles.statusDone
+      : state === "partial"
+        ? styles.statusPartial
+        : styles.statusTodo;
+
+  const label =
+    state === "done" ? "พร้อมใช้งาน" : state === "partial" ? "กำลังพัฒนา" : "ยังไม่เริ่ม";
 
   return (
-    <div
-      className={`flex items-center justify-between gap-4 px-4 py-3 sm:px-5 ${
-        last ? "" : "border-b border-slate-100"
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${cfg.dot}`} />
+    <div className={styles.statusRow}>
+      <div className={styles.statusMeta}>
+        <span className={`${styles.statusDot} ${dotCls}`} />
         <div>
-          <div className="text-sm font-semibold text-slate-900">{name}</div>
-          {note && <div className="text-[11px] text-slate-500">{note}</div>}
+          <div className={styles.statusName}>{name}</div>
+          {note && <div className={styles.statusNote}>{note}</div>}
         </div>
       </div>
-      <span
-        className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.cls}`}
-      >
-        {cfg.label}
-      </span>
+      <span className={`${styles.statusLabel} ${labelCls}`}>{label}</span>
     </div>
   );
 }

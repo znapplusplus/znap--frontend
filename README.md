@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Znap++ Frontend
 
-## Getting Started
+On-demand vacation photography — Next.js 16, React 19, TypeScript.
 
-First, run the development server:
+> **👋 New to the project?** **อ่าน [`docs/FRONTEND_RULES.md`](./docs/FRONTEND_RULES.md) ก่อนเลย** — กฎเหล็ก 9 ข้อ (เขียนเป็นภาษาไทย) ที่ทุกคนในทีมต้องอ่าน เพื่อให้โค้ดเดินไปในทิศทางเดียวกัน
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requires Node 20+, npm 10+.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Documentation
 
-## Learn More
+| Doc | What's inside |
+|---|---|
+| **⭐ [Frontend Rules (ไทย)](./docs/FRONTEND_RULES.md)** | **กฎเหล็ก 9 ข้อ — อ่านก่อนเขียนโค้ด** |
+| [Design System](./docs/DESIGN_SYSTEM.md) | All design tokens — colors, typography, spacing, radius, shadows, semantic states. |
+| [Coding Standards](./docs/CODING_STANDARDS.md) | TypeScript, React, CSS rules, naming, folder structure. |
+| [Component Guide](./docs/COMPONENT_GUIDE.md) | How to build a component, templates, Do/Don't, a11y checklist. |
+| [Contributing](./docs/CONTRIBUTING.md) | Branch naming, commit format, PR checklist. |
 
-To learn more about Next.js, take a look at the following resources:
+**แนะนำลำดับการอ่าน:** Frontend Rules → Design System → Coding Standards → Component Guide → Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
+```
+znap-frontend/
+├── app/                       # Next.js App Router (pages, layouts)
+├── components/
+│   ├── ui/                    # Primitives (Button, Input, TagInput, …)
+│   ├── layout/                # Site chrome (Navbar, Footer)
+│   ├── sections/              # Page sections (LandingHero, …)
+│   └── features/              # Feature-scoped (auth, booking, wallet, …)
+├── docs/                      # ← Documentation hub
+├── lib/                       # Utilities, API clients
+├── public/                    # Static assets
+└── styles/
+    └── tokens.css             # Design tokens — single source of truth
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Where new code goes:**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Type | Location |
+|---|---|
+| Reusable primitive (Button, Card, Slider) | `components/ui/` |
+| Layout chrome (Navbar, Footer, Sidebar) | `components/layout/` |
+| Page section (Hero, FAQ, CTA banner) | `components/sections/` |
+| Feature-scoped component (auth, booking, …) | `components/features/` |
+| One-off element used once | Inside the page's `page.tsx` |
+
+## Tech stack
+
+- **Framework:** Next.js 16 (App Router)
+- **UI:** React 19 + TypeScript
+- **Styling:** CSS Modules + design tokens (no Tailwind)
+- **Fonts:** Montserrat (heading), Poppins (body), Noto Sans Thai (Thai), Geist Mono (code) — all via `next/font`
+- **Backend:** .NET 10 Web API
+- **Database:** Supabase PostgreSQL + PostGIS
+
+## Live preview
+
+- `/` — Landing page
+- `/design-system` — Component / token preview, browseable by category
+- `/dashboard` — Authenticated dashboard
+- `/admin` — Admin shell
+
+---
+
+## Working with this repo
+
+- We don't use Tailwind. All styles use CSS Modules + design tokens. See [Coding Standards](./docs/CODING_STANDARDS.md).
+- Every new visual change should reference an existing design token. If you need a new value, add it to `styles/tokens.css` first and document it.
+- See [Contributing](./docs/CONTRIBUTING.md) before opening a PR.
+
+## Conventions cheat sheet
+
+| Thing | Convention |
+|---|---|
+| Component folder | `PascalCase/` |
+| File names | `PascalCase.tsx`, `PascalCase.module.css` |
+| CSS classes | `camelCase` |
+| Path imports | `@/...` for cross-folder, `./` for same-folder |
+| Spacing in CSS | `var(--space-md)` — never `16px` |
+| Colors in CSS | `var(--color-primary)` — never `#255AB1` |
+| Headings (`h1`–`h6`) | Use as-is. Sizes auto-scale via `clamp()` in `globals.css`. |

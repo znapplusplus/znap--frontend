@@ -1,0 +1,83 @@
+.root {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-background);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  font-family: var(--font-body);
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+.root:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.root:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Aspect */
+.aspectSquare { aspect-ratio: 1 / 1; }
+.aspectLandscape { aspect-ratio: 4 / 3; }
+.aspectPortrait { aspect-ratio: 3 / 4; }
+
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.iconBadge {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-secondary);
+  color: var(--color-surface);
+  display: inline-grid;
+  place-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.iconBadge svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.label {
+  position: absolute;
+  left: var(--space-md);
+  bottom: var(--space-md);
+  color: var(--color-surface);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}

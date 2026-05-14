@@ -1,0 +1,49 @@
+.root {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  line-height: 1.1;
+}
+
+.symbol {
+  font-size: 0.75em;
+  font-weight: var(--font-weight-semibold);
+  align-self: flex-start;
+  margin-top: 0.15em;
+}
+
+.amount {
+  letter-spacing: -0.01em;
+}
+
+.unit {
+  font-family: var(--font-body);
+  font-size: 0.7em;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+  margin-left: var(--space-xs);
+}
+
+/* Sizes */
+.sizeSm { font-size: var(--font-size-base); }
+.sizeMd { font-size: var(--font-size-lg); }
+.sizeLg { font-size: var(--font-size-xl); }
+.sizeXl { font-size: var(--font-size-2xl); }
+
+/* States */
+.muted {
+  color: var(--color-text-muted);
+}
+
+.strike {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.emphasis {
+  color: var(--color-primary);
+}

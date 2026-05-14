@@ -1,10 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { TravelerAuthShell } from "@/components/auth";
-import { Button, Input } from "@/components/ui";
+import { TravelerAuthShell } from "@/components/features";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Divider,
+  Input,
+  SocialAuthButton,
+  type SocialProvider,
+} from "@/components/ui";
 import styles from "./page.module.css";
 
 type FieldErrors = {
@@ -20,7 +28,7 @@ function validateLogin(data: { email: string; password: string }): FieldErrors {
   if (!data.email.trim()) next.email = "Email address is required";
   else if (!EMAIL_RE.test(data.email)) next.email = "Enter a valid email address";
   if (!data.password) next.password = "Password is required";
-  else if (data.password.length < 6) next.password = "Use at least 6 characters";
+  else if (data.password.length < 8) next.password = "Use 8 or more characters";
   return next;
 }
 
@@ -28,6 +36,7 @@ export default function PhotographerLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(true);
   const [touched, setTouched] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +45,16 @@ export default function PhotographerLoginPage() {
     () => (touched ? validateLogin({ email, password }) : {}),
     [email, password, touched],
   );
+
+  useEffect(() => {
+    const saved = localStorage.getItem("znap_photographer_remember_email");
+    if (saved) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setEmail(saved);
+      setRemember(true);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, []);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -59,6 +78,9 @@ export default function PhotographerLoginPage() {
         return;
       }
 
+      if (remember) localStorage.setItem("znap_photographer_remember_email", email);
+      else localStorage.removeItem("znap_photographer_remember_email");
+
       localStorage.setItem("znap_token", data.token);
       localStorage.setItem(
         "znap_user",
@@ -77,15 +99,22 @@ export default function PhotographerLoginPage() {
     }
   };
 
+  const handleSocial = (provider: SocialProvider) => {
+    // TODO: wire to backend OAuth flow when ready
+    setSubmitError(`${provider} sign-in coming soon.`);
+  };
+
   return (
     <TravelerAuthShell
       tone="photographer"
       title={<>Stay in control of your work</>}
-      subtitle="Log in to manage jobs and keep your workflow moving"
+      subtitle="Log in to manage jobs and keep your workflow moving."
     >
       <form onSubmit={handleLogin} noValidate className={styles.panel}>
-        <h1 className={styles.title}>Ready to znap++</h1>
-        <p className={styles.description}>Please enter your details to sign in.</p>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Ready to znap++</h1>
+          <p className={styles.description}>Please enter your details to sign in.</p>
+        </header>
 
         <Input
           label="Email address"
@@ -95,6 +124,8 @@ export default function PhotographerLoginPage() {
           onChange={(event) => setEmail(event.target.value)}
           errorText={errors.email}
           disabled={isLoading}
+          autoComplete="email"
+          fullWidth
         />
 
         <Input
@@ -104,18 +135,55 @@ export default function PhotographerLoginPage() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           errorText={errors.password}
-          helperText="Use 8 or more characters with a mix of letters, numbers & symbols"
+          helperText={
+            errors.password
+              ? undefined
+              : "Use 8 or more characters with a mix of letters, numbers & symbols"
+          }
           disabled={isLoading}
+          autoComplete="current-password"
+          fullWidth
         />
 
-        {submitError ? <div role="alert" className={styles.errorText}>{submitError}</div> : null}
+        <div className={styles.formMeta}>
+          <Checkbox
+            label="Remember me"
+            checked={remember}
+            onChange={(event) => setRemember(event.target.checked)}
+            disabled={isLoading}
+            size="sm"
+          />
+          <Link href="/forgot-password" className={styles.forgotLink}>
+            Forgot password?
+          </Link>
+        </div>
 
-        <Button type="submit" variant="unstyled" className={styles.primaryButton} disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Login"}
+        {submitError ? (
+          <Alert variant="error" onClose={() => setSubmitError(null)}>
+            {submitError}
+          </Alert>
+        ) : null}
+
+        <Button type="submit" variant="accent" disabled={isLoading} fullWidth size="lg">
+          {isLoading ? "Logging in…" : "Login"}
         </Button>
 
         <p className={styles.switchText}>
           Don&apos;t have an account? <Link href="/photographer/register">Sign up</Link>
+        </p>
+
+        <Divider label="or" />
+
+        <div className={styles.socialStack}>
+          <SocialAuthButton provider="google" mode="login" onClick={() => handleSocial("google")} disabled={isLoading} />
+          <SocialAuthButton provider="apple" mode="login" onClick={() => handleSocial("apple")} disabled={isLoading} />
+          <SocialAuthButton provider="facebook" mode="login" onClick={() => handleSocial("facebook")} disabled={isLoading} />
+          <SocialAuthButton provider="x" mode="login" onClick={() => handleSocial("x")} disabled={isLoading} />
+        </div>
+
+        <p className={styles.switchText}>
+          Looking for a traveler account?{" "}
+          <Link href="/login">Log in as traveler</Link>
         </p>
       </form>
     </TravelerAuthShell>
