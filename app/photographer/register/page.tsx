@@ -321,10 +321,6 @@ export default function PhotographerRegisterPage() {
   }, []);
 
   const handleSocial = (provider: SocialProvider) => {
-    if (provider === "apple") {
-      setSubmitError("Apple Sign-In coming soon — currently in setup.");
-      return;
-    }
     // TODO: wire to backend OAuth flow when ready
     setSubmitError(`${provider} sign-up coming soon.`);
   };
