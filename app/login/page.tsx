@@ -90,6 +90,10 @@ export default function LoginPage() {
   };
 
   const handleSocial = (provider: SocialProvider) => {
+    if (provider === "apple") {
+      setSubmitError("Apple Sign-In coming soon — currently in setup.");
+      return;
+    }
     const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5034";
     const role = "traveler";
     const returnTo = "/";

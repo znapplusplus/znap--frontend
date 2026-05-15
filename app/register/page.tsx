@@ -191,9 +191,13 @@ export default function RegisterPage() {
   };
 
   const handleSocial = (provider: SocialProvider) => {
+    if (provider === "apple") {
+      setSubmitError("Apple Sign-In coming soon — currently in setup.");
+      return;
+    }
     const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5034";
     const role = "traveler";
-    const returnTo = "/";
+    const returnTo = "/register/category";
     window.location.href =
       `${API_URL}/api/auth/oauth/${provider}/start` +
       `?role=${role}&return_to=${encodeURIComponent(returnTo)}`;
